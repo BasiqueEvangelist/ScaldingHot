@@ -1,0 +1,17 @@
+{
+	"schemaVersion": 1,
+	"id": "scaldinghot-testmod",
+	"version": "0.1.0",
+	"name": "Scalding Hot! Testmod",
+	"description": "Scalding Hot's testmod",
+	"authors": [
+		"BasiqueEvangelist"
+	],
+	"license": "LGPL-3.0-only",
+	"environment": "*",
+	"entrypoints": {
+		"main": [
+			"me.basiqueevangelist.scaldinghot.testmod.ScaldingHotTestmod"
+		]
+	}
+}

@@ -1,0 +1,33 @@
+{
+	"schemaVersion": 1,
+	"id": "scaldinghot",
+	"version": "${version}",
+	"name": "Scalding Hot!",
+	"description": "Hot reloading of client resources and server data",
+	"authors": [
+		"BasiqueEvangelist"
+	],
+	"contact": {
+		"sources": "https://github.com/BasiqueEvangelist/ScaldingHot"
+	},
+	"license": "LGPL-3.0-only",
+	"icon": "assets/scaldinghot/icon.png",
+	"environment": "*",
+	"entrypoints": {
+		"main": [
+			"me.basiqueevangelist.scaldinghot.ScaldingHot"
+		],
+		"client": [
+			"me.basiqueevangelist.scaldinghot.client.ScaldingHotClient"
+		]
+	},
+	"mixins": [
+		"scaldinghot.mixins.json"
+	],
+	"depends": {
+		"fabricloader": ">=0.15.11",
+		"minecraft": "~1.21.1",
+		"java": ">=21",
+		"fabric-api": "*"
+	}
+}

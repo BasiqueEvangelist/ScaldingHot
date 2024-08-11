@@ -1,0 +1,28 @@
+{
+    "parent": "minecraft:story/upgrade_tools",
+    "criteria": {
+        "myfacewhen": {
+            "conditions": {
+                "items": [
+                    {
+                        "items": "minecraft:painting"
+                    }
+                ]
+            },
+            "trigger": "minecraft:inventory_changed"
+        }
+    },
+    "display": {
+        "title": "funny",
+        "description": "damn",
+        "icon": {
+            "count": 1,
+            "id": "minecraft:creeper_spawn_egg"
+        }
+    },
+    "requirements": [
+        [
+            "myfacewhen"
+        ]
+    ]
+}
