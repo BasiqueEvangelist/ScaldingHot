@@ -29,7 +29,7 @@ public class SimpleResourceReloadMixin {
     @Inject(method = "start", at = @At("HEAD"))
     private static void clearWatches(ResourceManager manager, List<ResourceReloader> reloaders, Executor prepareExecutor, Executor applyExecutor, CompletableFuture<Unit> initialStage, boolean profiled, CallbackInfoReturnable<ResourceReload> cir) {
         if (manager instanceof ResourceManagerAccess access) {
-            ResourceWatcher.get(access.scaldinghot$type()).reset();
+            ResourceWatcher.get(access.scaldinghot$type()).start(manager.streamResourcePacks().toList());
         }
     }
 }

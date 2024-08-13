@@ -1,10 +1,13 @@
 package me.basiqueevangelist.scaldinghot.instrument;
 
 import me.basiqueevangelist.scaldinghot.ScaldingHot;
+import me.basiqueevangelist.scaldinghot.ScaldingResourcePack;
+import net.minecraft.resource.ResourcePack;
 import net.minecraft.resource.ResourceType;
 
 import java.io.IOException;
 import java.nio.file.*;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.util.*;
 
 public class ResourceWatcher {
@@ -40,9 +43,17 @@ public class ResourceWatcher {
             .start(this::thread);
     }
 
-    public void reset() {
+    public void start(List<ResourcePack> packs) {
         REGISTERED_KEYS.values().forEach(WatchKey::cancel);
         REGISTERED_KEYS.clear();
+
+        for (var pack : packs) {
+            if (pack instanceof ScaldingResourcePack scalding) {
+                for (var path : scalding.getRootPaths(this.type)) {
+                    registerPath(path);
+                }
+            }
+        }
     }
 
     private void thread() {
@@ -53,19 +64,44 @@ public class ResourceWatcher {
                 Path basePath = (Path) key.watchable();
 
                 for (var event : key.pollEvents()) {
+                    if (event.kind() == StandardWatchEventKinds.OVERFLOW) {
+                        ScaldingHot.LOGGER.warn("Missed {} watch events for {}", event.count(), basePath);
+                        continue;
+                    }
+
                     if (!(event.context() instanceof Path)) continue; // mfw
 
                     Path filePath = basePath.resolve((Path) event.context());
 
                     if (filePath.getFileName().toString().endsWith("~")) continue; // editor file
 
-                    if (REGISTERED_KEYS.containsKey(filePath)) {
-                        REGISTERED_KEYS.remove(filePath).cancel();
+                    if (event.kind() == StandardWatchEventKinds.ENTRY_CREATE) {
+                        if (Files.isDirectory(filePath)) {
+                            registerPath(filePath);
+
+                            try {
+                                Files.walkFileTree(filePath, new SimpleFileVisitor<>() {
+                                    @Override
+                                    public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+                                        if (attrs.isRegularFile())
+                                            HotReloadBatch.get(ResourceWatcher.this.type).fileAdded(file);
+
+                                        return FileVisitResult.CONTINUE;
+                                    }
+                                });
+                            } catch (IOException e) {
+                                ScaldingHot.LOGGER.error("Couldn't walk directory tree of {}", filePath, e);
+                            }
+                        } else if (Files.isRegularFile(filePath)) {
+                            HotReloadBatch.get(this.type).fileAdded(filePath);
+                        }
+                    } else if (event.kind() == StandardWatchEventKinds.ENTRY_MODIFY) {
+                        HotReloadBatch.get(this.type).fileModified(filePath);
+                    } else if (event.kind() == StandardWatchEventKinds.ENTRY_DELETE) {
+                        if (Files.isDirectory(filePath)) REGISTERED_KEYS.remove(filePath).cancel();
+
+                        HotReloadBatch.get(this.type).fileRemoved(filePath);
                     }
-
-//                    ScaldingHot.LOGGER.info("watch event: {} {}", event.kind().name(), filePath);
-
-                    HotReloadBatch.get(this.type).addChanged(filePath);
                 }
 
                 key.reset();
@@ -75,9 +111,8 @@ public class ResourceWatcher {
         }
     }
 
-    public void registerPath(Path path) {
+    private void registerPath(Path path) {
         if (path.getFileSystem() != FileSystems.getDefault()) return;
-        if (REGISTERED_KEYS.containsKey(path)) return;
 
         if (Files.isSymbolicLink(path)) return;
 
@@ -92,6 +127,8 @@ public class ResourceWatcher {
         }
 
         if (Files.isRegularFile(path)) path = path.getParent();
+
+        if (REGISTERED_KEYS.containsKey(path)) return;
 
         try {
             var key = path.register(watchService, StandardWatchEventKinds.ENTRY_CREATE, StandardWatchEventKinds.ENTRY_MODIFY, StandardWatchEventKinds.ENTRY_DELETE);

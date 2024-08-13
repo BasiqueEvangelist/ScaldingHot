@@ -1,22 +1,20 @@
 package me.basiqueevangelist.scaldinghot.mixin.fabric;
 
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
-import com.llamalad7.mixinextras.injector.ModifyReturnValue;
-import com.llamalad7.mixinextras.sugar.Local;
 import me.basiqueevangelist.scaldinghot.ScaldingHot;
 import me.basiqueevangelist.scaldinghot.ScaldingResourcePack;
-import me.basiqueevangelist.scaldinghot.instrument.PathProvidingInputSupplier;
 import net.fabricmc.fabric.api.resource.ResourcePackActivationType;
 import net.fabricmc.fabric.impl.resource.loader.ModNioResourcePack;
 import net.fabricmc.loader.api.ModContainer;
-import net.minecraft.resource.InputSupplier;
 import net.minecraft.resource.ResourceType;
+import net.minecraft.util.Identifier;
+import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 
-import java.io.InputStream;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
 
@@ -48,29 +46,36 @@ public abstract class ModNioResourcePackMixin implements ScaldingResourcePack {
         return newList;
     }
 
-    @ModifyReturnValue(method = "openFile", at = @At(value = "RETURN", ordinal = 0))
-    private InputSupplier<InputStream> wrap(InputSupplier<InputStream> original, @Local Path path) {
-        return PathProvidingInputSupplier.wrap(original, path);
+    @Override
+    public List<Path> getRootPaths(ResourceType type) {
+        List<Path> paths = new ArrayList<>();
+
+        for (Path basePath : basePaths) {
+            Path path = basePath.resolve(type.getDirectory());
+            if (!Files.exists(path)) continue;
+            paths.add(path);
+        }
+
+        return paths;
     }
 
-    // Basically copied from ModNioResourcePack#findResources
     @Override
-    public List<Path> getPathsForSearch(ResourceType type, String namespace, String path) {
-        if (!namespaces.getOrDefault(type, Collections.emptySet()).contains(namespace)) {
-            return List.of();
-        }
-
-        List<Path> paths = new ArrayList<>();
-        
-        for (Path basePath : basePaths) {
+    public @Nullable Identifier pathToResourceId(ResourceType type, Path path) {
+        for (Path basePath : this.basePaths) {
             String separator = basePath.getFileSystem().getSeparator();
-            Path nsPath = basePath.resolve(type.getDirectory()).resolve(namespace);
-            Path searchPath = nsPath.resolve(path.replace("/", separator)).normalize();
-            if (!exists(searchPath)) continue;
 
-            paths.add(searchPath);
+            Path typePath = basePath.resolve(type.getDirectory());
+
+            if (!path.startsWith(typePath)) continue;
+
+            Path relPath = typePath.relativize(path);
+            String namespace = relPath.getName(0).toString();
+            Path nsPath = typePath.resolve(namespace);
+
+            String filename = nsPath.relativize(path).toString().replace(separator, "/");
+            return Identifier.tryParse(namespace, filename);
         }
-        
-        return paths;
+
+        return null;
     }
 }

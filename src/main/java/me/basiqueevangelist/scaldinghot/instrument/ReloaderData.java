@@ -1,9 +1,9 @@
 package me.basiqueevangelist.scaldinghot.instrument;
 
-import me.basiqueevangelist.scaldinghot.ScaldingHot;
 import net.fabricmc.fabric.api.resource.IdentifiableResourceReloadListener;
 import net.minecraft.resource.ResourceReloader;
 import net.minecraft.resource.ResourceType;
+import net.minecraft.util.Identifier;
 
 import java.nio.file.Path;
 import java.util.*;
@@ -15,7 +15,7 @@ public class ReloaderData {
 
     public final String reloaderName;
     public final ResourceType type;
-    public final Set<Path> accessedPaths = new HashSet<>();
+    public final Set<Identifier> accessedResources = new HashSet<>();
 
     public ReloaderData(ResourceReloader reloader, ResourceType type) {
         this.type = type;
@@ -30,17 +30,15 @@ public class ReloaderData {
         return RELOADER_TO_DATA.computeIfAbsent(reloader, r -> new ReloaderData(r, type));
     }
 
-    public void markAccessed(Path path) {
-        accessedPaths.add(path);
-
-        if (LOG_ALL_ACCESSES) ScaldingHot.LOGGER.info("{} accessed {}", reloaderName, path);
-
-        ResourceWatcher.get(type).registerPath(path);
+    public void markAccessed(Identifier id) {
+        accessedResources.add(id);
     }
 
-    public boolean isRelevant(Path path) {
-        for (var accessed : accessedPaths) {
-            if (path.equals(accessed) || path.startsWith(accessed)) return true;
+    public boolean isRelevant(Identifier id) {
+        for (var accessed : accessedResources) {
+            if (!accessed.getNamespace().equals(id.getNamespace())) continue;
+
+            if (id.equals(accessed) || id.getPath().startsWith(accessed.getPath())) return true;
         }
 
         return false;

@@ -1,13 +1,10 @@
 package me.basiqueevangelist.scaldinghot.instrument;
 
 import me.basiqueevangelist.scaldinghot.ScaldingHot;
-import me.basiqueevangelist.scaldinghot.ScaldingResourcePack;
-import me.basiqueevangelist.scaldinghot.mixin.ResourceAccessor;
 import me.basiqueevangelist.scaldinghot.pond.ResourceManagerAccess;
 import net.minecraft.resource.*;
 import net.minecraft.util.Identifier;
 
-import java.io.InputStream;
 import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
@@ -42,7 +39,7 @@ public class InstrumentingResourceManager implements ResourceManager {
         if (LOG_ALL_ACCESSES) ScaldingHot.LOGGER.info("{}: getAllResources {}", reloader.getName(), id);
 
         List<Resource> resources = delegate.getAllResources(id);
-        markAllPaths(resources);
+        markPath(id);
         return resources;
     }
 
@@ -53,7 +50,7 @@ public class InstrumentingResourceManager implements ResourceManager {
         markAllFrom(startingPath);
 
         Map<Identifier, Resource> res = delegate.findResources(startingPath, allowedPathPredicate);
-        markAllPaths(res.values());
+        markAllPaths(res.keySet());
         return res;
     }
 
@@ -64,7 +61,7 @@ public class InstrumentingResourceManager implements ResourceManager {
         markAllFrom(startingPath);
 
         Map<Identifier, List<Resource>> res = delegate.findAllResources(startingPath, allowedPathPredicate);
-        res.values().forEach(this::markAllPaths);
+        markAllPaths(res.keySet());
         return res;
     }
 
@@ -77,39 +74,31 @@ public class InstrumentingResourceManager implements ResourceManager {
     public Optional<Resource> getResource(Identifier id) {
         if (LOG_ALL_ACCESSES) ScaldingHot.LOGGER.info("{}: getResource {}", reloader.getName(), id);
 
-        Optional<Resource> res = delegate.getResource(id);
-        res.ifPresent(this::markPath);
-        return res;
+        markPath(id);
+
+        return delegate.getResource(id);
     }
 
-    private void markAllPaths(Collection<Resource> resources) {
+    private void markAllPaths(Collection<Identifier> ids) {
         ReloaderData data = ReloaderData.getForReloader(reloader, type);
 
-        for (var resource : resources) {
-            if (((ResourceAccessor) resource).getInputSupplier() instanceof PathProvidingInputSupplier<InputStream> providing) {
-                data.markAccessed(providing.getPath());
-            }
+        for (var id : ids) {
+            data.markAccessed(id);
         }
     }
 
-    private void markPath(Resource resource) {
+    private void markPath(Identifier id) {
         ReloaderData data = ReloaderData.getForReloader(reloader, type);
 
-        if (((ResourceAccessor) resource).getInputSupplier() instanceof PathProvidingInputSupplier<InputStream> providing) {
-            data.markAccessed(providing.getPath());
-        }
+        data.markAccessed(id);
     }
 
     private void markAllFrom(String startingPath) {
         ReloaderData data = ReloaderData.getForReloader(reloader, type);
 
         for (var pack : (Iterable<ResourcePack>) delegate.streamResourcePacks()::iterator) {
-            if (pack instanceof ScaldingResourcePack scalding) {
-                for (var namespace : pack.getNamespaces(this.type)) {
-                    for (var path : scalding.getPathsForSearch(this.type, namespace, startingPath)) {
-                        data.markAccessed(path);
-                    }
-                }
+            for (var namespace : pack.getNamespaces(this.type)) {
+                data.markAccessed(Identifier.of(namespace, startingPath));
             }
         }
     }

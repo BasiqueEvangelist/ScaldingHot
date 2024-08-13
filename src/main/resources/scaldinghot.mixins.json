@@ -3,7 +3,7 @@
     "package": "me.basiqueevangelist.scaldinghot.mixin",
     "compatibilityLevel": "JAVA_21",
     "mixins": [
-        "InputSupplierMixin",
+        "DirectoryResourcePackMixin",
         "LifecycledResourceManagerImplMixin",
         "ProfiledResourceReloadMixin",
         "ResourceAccessor",
