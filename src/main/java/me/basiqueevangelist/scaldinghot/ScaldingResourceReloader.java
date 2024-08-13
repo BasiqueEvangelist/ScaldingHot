@@ -1,5 +1,7 @@
 package me.basiqueevangelist.scaldinghot;
 
+import me.basiqueevangelist.scaldinghot.api.HotReloadBatch;
+
 public interface ScaldingResourceReloader {
-    void onHotReloadFinished();
+    void onHotReload(HotReloadBatch batch);
 }

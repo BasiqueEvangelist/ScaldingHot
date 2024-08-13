@@ -84,7 +84,7 @@ public class ResourceWatcher {
                                     @Override
                                     public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
                                         if (attrs.isRegularFile())
-                                            HotReloadBatch.get(ResourceWatcher.this.type).fileAdded(file);
+                                            HotReloadBatchImpl.get(ResourceWatcher.this.type).fileAdded(file);
 
                                         return FileVisitResult.CONTINUE;
                                     }
@@ -93,14 +93,14 @@ public class ResourceWatcher {
                                 ScaldingHot.LOGGER.error("Couldn't walk directory tree of {}", filePath, e);
                             }
                         } else if (Files.isRegularFile(filePath)) {
-                            HotReloadBatch.get(this.type).fileAdded(filePath);
+                            HotReloadBatchImpl.get(this.type).fileAdded(filePath);
                         }
                     } else if (event.kind() == StandardWatchEventKinds.ENTRY_MODIFY) {
-                        HotReloadBatch.get(this.type).fileModified(filePath);
+                        HotReloadBatchImpl.get(this.type).fileModified(filePath);
                     } else if (event.kind() == StandardWatchEventKinds.ENTRY_DELETE) {
                         if (Files.isDirectory(filePath)) REGISTERED_KEYS.remove(filePath).cancel();
 
-                        HotReloadBatch.get(this.type).fileRemoved(filePath);
+                        HotReloadBatchImpl.get(this.type).fileRemoved(filePath);
                     }
                 }
 
