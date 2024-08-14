@@ -22,6 +22,8 @@ public class ScaldingHot implements ModInitializer {
 
 	private static final Set<Class<? extends ResourceReloader>> HOT_RELOADERS = new HashSet<>();
 
+	private static final boolean INSTRUMENT_EVERYTHING = false;
+
 	@Override
 	public void onInitialize() {
 		ResourceWatcher.SERVER_DATA.init();
@@ -38,6 +40,8 @@ public class ScaldingHot implements ModInitializer {
 	}
 
 	public static boolean isHotReloadable(ResourceReloader reloader) {
+		if (INSTRUMENT_EVERYTHING) return true;
+
         return HOT_RELOADERS.contains(reloader.getClass());
 	}
 }

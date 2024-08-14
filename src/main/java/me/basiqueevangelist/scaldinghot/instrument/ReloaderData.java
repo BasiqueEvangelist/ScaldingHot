@@ -11,7 +11,7 @@ import java.util.*;
 public class ReloaderData {
     private static final boolean LOG_ALL_ACCESSES = false;
 
-    static final WeakHashMap<ResourceReloader, ReloaderData> RELOADER_TO_DATA = new WeakHashMap<>();
+    public static final WeakHashMap<ResourceReloader, ReloaderData> RELOADER_TO_DATA = new WeakHashMap<>();
 
     public final String reloaderName;
     public final ResourceType type;
