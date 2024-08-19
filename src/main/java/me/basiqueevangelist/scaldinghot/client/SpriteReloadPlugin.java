@@ -12,7 +12,6 @@ import net.minecraft.client.texture.SpriteAtlasTexture;
 import net.minecraft.client.texture.SpriteLoader;
 import net.minecraft.client.texture.SpriteOpener;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 
 public class SpriteReloadPlugin implements HotReloadPlugin {

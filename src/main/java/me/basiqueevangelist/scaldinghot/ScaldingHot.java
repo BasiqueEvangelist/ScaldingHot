@@ -3,7 +3,6 @@ package me.basiqueevangelist.scaldinghot;
 import me.basiqueevangelist.scaldinghot.config.ConfigManager;
 import me.basiqueevangelist.scaldinghot.instrument.ResourceWatcher;
 import net.fabricmc.api.ModInitializer;
-
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.minecraft.recipe.RecipeManager;
 import net.minecraft.resource.ResourceReloader;
@@ -46,6 +45,7 @@ public class ScaldingHot implements ModInitializer {
 
 	public static boolean isHotReloadable(ResourceReloader reloader) {
 		if (INSTRUMENT_EVERYTHING) return true;
+		if (reloader instanceof HotReloadPlugin) return true;
 
         return HOT_RELOADERS.contains(reloader.getClass());
 	}

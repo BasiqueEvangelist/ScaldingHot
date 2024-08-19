@@ -14,8 +14,7 @@ import java.util.List;
 
 @Mixin(LifecycledResourceManagerImpl.class)
 public class LifecycledResourceManagerImplMixin implements ResourceManagerAccess {
-    @Unique
-    private ResourceType scaldinghot$type;
+    @Unique private ResourceType scaldinghot$type;
 
     @Inject(method = "<init>", at = @At("TAIL"))
     private void init(ResourceType resourceType, List<ResourcePack> list, CallbackInfo ci) {

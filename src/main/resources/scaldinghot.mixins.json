@@ -7,7 +7,6 @@
         "LifecycledResourceManagerImplMixin",
         "NamespaceResourceManagerMixin",
         "ProfiledResourceReloadMixin",
-        "ResourceAccessor",
         "ResourceMixin",
         "SimpleResourceReloadMixin",
         "fabric.ModNioResourcePackMixin"

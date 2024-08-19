@@ -1,7 +1,7 @@
 package me.basiqueevangelist.scaldinghot.mixin.client;
 
-import me.basiqueevangelist.scaldinghot.ScaldingHot;
 import me.basiqueevangelist.scaldinghot.HotReloadPlugin;
+import me.basiqueevangelist.scaldinghot.ScaldingHot;
 import me.basiqueevangelist.scaldinghot.api.HotReloadBatch;
 import net.minecraft.client.texture.AbstractTexture;
 import net.minecraft.client.texture.TextureManager;

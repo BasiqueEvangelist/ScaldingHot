@@ -1,8 +1,8 @@
 package me.basiqueevangelist.scaldinghot.instrument;
 
+import me.basiqueevangelist.scaldinghot.HotReloadPlugin;
 import me.basiqueevangelist.scaldinghot.ScaldingHot;
 import me.basiqueevangelist.scaldinghot.ScaldingResourcePack;
-import me.basiqueevangelist.scaldinghot.HotReloadPlugin;
 import me.basiqueevangelist.scaldinghot.api.HotReloadBatch;
 import me.basiqueevangelist.scaldinghot.client.ScaldingHotClient;
 import net.minecraft.resource.*;

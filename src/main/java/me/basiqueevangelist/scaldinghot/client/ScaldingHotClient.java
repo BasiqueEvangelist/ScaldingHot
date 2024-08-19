@@ -15,10 +15,7 @@ import java.util.concurrent.Executor;
 public class ScaldingHotClient implements ClientModInitializer {
     @Override
     public void onInitializeClient() {
-        ClientCommandRegistrationCallback.EVENT.register((dispatcher, registries) -> {
-            AddPathCommand.register(dispatcher, registries);
-            DumpReloaderDataCommand.register(dispatcher, registries);
-        });
+        ClientCommandRegistrationCallback.EVENT.register(AddPathCommand::register);
 
         ResourceWatcher.CLIENT_RESOURCES.init();
 

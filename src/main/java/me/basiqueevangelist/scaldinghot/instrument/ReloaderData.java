@@ -5,8 +5,9 @@ import net.minecraft.resource.ResourceReloader;
 import net.minecraft.resource.ResourceType;
 import net.minecraft.util.Identifier;
 
-import java.nio.file.Path;
-import java.util.*;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.WeakHashMap;
 
 public class ReloaderData {
     private static final boolean LOG_ALL_ACCESSES = false;

@@ -16,19 +16,13 @@ import org.spongepowered.asm.mixin.injection.At;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @SuppressWarnings("UnstableApiUsage")
 @Mixin(ModNioResourcePack.class)
 public abstract class ModNioResourcePackMixin implements ScaldingResourcePack {
-    @Shadow @Final private Map<ResourceType, Set<String>> namespaces;
-
     @Shadow @Final private List<Path> basePaths;
-
-    @Shadow
-    private static boolean exists(Path path) {
-        throw new UnsupportedOperationException();
-    }
 
     @ModifyExpressionValue(method = "create", at = @At(value = "INVOKE", target = "Lnet/fabricmc/loader/api/ModContainer;getRootPaths()Ljava/util/List;"))
     private static List<Path> injectPaths(List<Path> original, String id, ModContainer mod, String subPath, ResourceType type, ResourcePackActivationType activationType, boolean modBundled) {

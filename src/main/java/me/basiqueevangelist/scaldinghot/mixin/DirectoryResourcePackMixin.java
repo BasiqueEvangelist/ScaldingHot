@@ -14,7 +14,6 @@ import java.util.List;
 
 @Mixin(DirectoryResourcePack.class)
 public class DirectoryResourcePackMixin implements ScaldingResourcePack {
-
     @Shadow @Final private Path root;
 
     @Override
