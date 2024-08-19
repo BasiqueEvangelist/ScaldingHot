@@ -17,7 +17,9 @@ public class ResourceWatcher {
 
     private final WatchService watchService;
     private final ResourceType type;
-    private final Map<Path, WatchKey> REGISTERED_KEYS = new HashMap<>();
+    private final Map<Path, WatchKey> registeredKeys = new HashMap<>();
+
+    private final Set<Path> existingPaths = new HashSet<>();
 
     private ResourceWatcher(ResourceType type) {
         this.type = type;
@@ -44,8 +46,8 @@ public class ResourceWatcher {
     }
 
     public void start(List<ResourcePack> packs) {
-        REGISTERED_KEYS.values().forEach(WatchKey::cancel);
-        REGISTERED_KEYS.clear();
+        registeredKeys.values().forEach(WatchKey::cancel);
+        registeredKeys.clear();
 
         for (var pack : packs) {
             if (pack instanceof ScaldingResourcePack scalding) {
@@ -64,6 +66,8 @@ public class ResourceWatcher {
                 Path basePath = (Path) key.watchable();
 
                 for (var event : key.pollEvents()) {
+                    ScaldingHot.LOGGER.debug("{}: {} {} ({})", basePath, event.kind(), event.context(), event.count());
+
                     if (event.kind() == StandardWatchEventKinds.OVERFLOW) {
                         ScaldingHot.LOGGER.warn("Missed {} watch events for {}", event.count(), basePath);
                         continue;
@@ -76,7 +80,11 @@ public class ResourceWatcher {
                     if (filePath.getFileName().toString().endsWith("~")) continue; // editor file
 
                     if (event.kind() == StandardWatchEventKinds.ENTRY_CREATE) {
-                        if (Files.isDirectory(filePath)) {
+                        if (existingPaths.contains(filePath) && Files.isRegularFile(filePath)) {
+                            // thanks for lying to me, java
+
+                            HotReloadBatchImpl.get(this.type).fileModified(filePath);
+                        } else if (Files.isDirectory(filePath)) {
                             registerPath(filePath);
 
                             try {
@@ -93,14 +101,18 @@ public class ResourceWatcher {
                                 ScaldingHot.LOGGER.error("Couldn't walk directory tree of {}", filePath, e);
                             }
                         } else if (Files.isRegularFile(filePath)) {
+                            existingPaths.add(filePath);
                             HotReloadBatchImpl.get(this.type).fileAdded(filePath);
                         }
                     } else if (event.kind() == StandardWatchEventKinds.ENTRY_MODIFY) {
                         HotReloadBatchImpl.get(this.type).fileModified(filePath);
                     } else if (event.kind() == StandardWatchEventKinds.ENTRY_DELETE) {
-                        if (Files.isDirectory(filePath)) REGISTERED_KEYS.remove(filePath).cancel();
-
-                        HotReloadBatchImpl.get(this.type).fileRemoved(filePath);
+                        if (Files.isDirectory(filePath))
+                            registeredKeys.remove(filePath).cancel();
+                        else {
+                            existingPaths.remove(filePath);
+                            HotReloadBatchImpl.get(this.type).fileRemoved(filePath);
+                        }
                     }
                 }
 
@@ -120,6 +132,7 @@ public class ResourceWatcher {
             try (var strem = Files.newDirectoryStream(path)) {
                 for (var subdir : strem) {
                     if (Files.isDirectory(subdir)) registerPath(subdir);
+                    else existingPaths.add(subdir);
                 }
             } catch (IOException e) {
                 ScaldingHot.LOGGER.error("Couldn't register watches for subdirectories of {}", path, e);
@@ -128,11 +141,11 @@ public class ResourceWatcher {
 
         if (Files.isRegularFile(path)) path = path.getParent();
 
-        if (REGISTERED_KEYS.containsKey(path)) return;
+        if (registeredKeys.containsKey(path)) return;
 
         try {
             var key = path.register(watchService, StandardWatchEventKinds.ENTRY_CREATE, StandardWatchEventKinds.ENTRY_MODIFY, StandardWatchEventKinds.ENTRY_DELETE);
-            REGISTERED_KEYS.put(path, key);
+            registeredKeys.put(path, key);
         } catch (IOException e) {
             ScaldingHot.LOGGER.error("Couldn't register watch for {}", path, e);
         }

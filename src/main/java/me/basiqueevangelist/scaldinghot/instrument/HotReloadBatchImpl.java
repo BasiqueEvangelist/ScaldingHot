@@ -2,7 +2,7 @@ package me.basiqueevangelist.scaldinghot.instrument;
 
 import me.basiqueevangelist.scaldinghot.ScaldingHot;
 import me.basiqueevangelist.scaldinghot.ScaldingResourcePack;
-import me.basiqueevangelist.scaldinghot.ScaldingResourceReloader;
+import me.basiqueevangelist.scaldinghot.HotReloadPlugin;
 import me.basiqueevangelist.scaldinghot.api.HotReloadBatch;
 import me.basiqueevangelist.scaldinghot.client.ScaldingHotClient;
 import net.minecraft.resource.*;
@@ -143,7 +143,7 @@ public class HotReloadBatchImpl implements HotReloadBatch {
             return id;
         }
 
-        ScaldingHot.LOGGER.warn("{} wasn't picked up by any resource packs", path);
+//        ScaldingHot.LOGGER.warn("{} wasn't picked up by any resource packs", path);
 
         return null;
     }
@@ -175,11 +175,15 @@ public class HotReloadBatchImpl implements HotReloadBatch {
 
                 List<ResourceReloader> neededReloaders = new ArrayList<>();
 
+                for (var plugin : ScaldingHot.listPlugins(this.type)) {
+                    plugin.onHotReload(this);
+                }
+
                 outer:
                 for (var data : ReloaderData.RELOADER_TO_DATA.entrySet()) {
                     if (data.getValue().type != this.type) continue;
 
-                    if (data.getKey() instanceof ScaldingResourceReloader scalding) {
+                    if (data.getKey() instanceof HotReloadPlugin scalding) {
                         scalding.onHotReload(HotReloadBatchImpl.this);
                     }
 
@@ -199,7 +203,7 @@ public class HotReloadBatchImpl implements HotReloadBatch {
 
                 List<ResourceReloader> automaticReloaders = new ArrayList<>(neededReloaders);
 
-                automaticReloaders.removeIf(x -> x instanceof ScaldingResourceReloader);
+                automaticReloaders.removeIf(x -> x instanceof HotReloadPlugin);
 
                 return SimpleResourceReload.create(
                         resourceManager(),

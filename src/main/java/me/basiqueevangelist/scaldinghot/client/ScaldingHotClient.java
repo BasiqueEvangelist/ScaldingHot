@@ -8,6 +8,7 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.resource.language.LanguageManager;
 import net.minecraft.client.texture.TextureManager;
 import net.minecraft.resource.ResourceManager;
+import net.minecraft.resource.ResourceType;
 
 import java.util.concurrent.Executor;
 
@@ -23,6 +24,8 @@ public class ScaldingHotClient implements ClientModInitializer {
 
         ScaldingHot.markAsHotReloadable(LanguageManager.class);
         ScaldingHot.markAsHotReloadable(TextureManager.class);
+
+        ScaldingHot.addHotReloadPlugin(ResourceType.CLIENT_RESOURCES, new SpriteReloadPlugin());
     }
 
     public static Executor getClientExecutor() {

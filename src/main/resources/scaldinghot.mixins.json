@@ -5,8 +5,10 @@
     "mixins": [
         "DirectoryResourcePackMixin",
         "LifecycledResourceManagerImplMixin",
+        "NamespaceResourceManagerMixin",
         "ProfiledResourceReloadMixin",
         "ResourceAccessor",
+        "ResourceMixin",
         "SimpleResourceReloadMixin",
         "fabric.ModNioResourcePackMixin"
     ],
@@ -14,6 +16,11 @@
         "defaultRequire": 1
     },
     "client": [
+        "client.SpriteAccessor",
+        "client.SpriteAtlasTextureAccessor",
+        "client.SpriteContentsMixin",
+        "client.SpriteOpenerMixin",
+        "client.TextureManagerAccessor",
         "client.TextureManagerMixin"
     ]
 }

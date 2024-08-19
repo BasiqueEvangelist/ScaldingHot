@@ -1,7 +1,7 @@
 package me.basiqueevangelist.scaldinghot.mixin.client;
 
 import me.basiqueevangelist.scaldinghot.ScaldingHot;
-import me.basiqueevangelist.scaldinghot.ScaldingResourceReloader;
+import me.basiqueevangelist.scaldinghot.HotReloadPlugin;
 import me.basiqueevangelist.scaldinghot.api.HotReloadBatch;
 import net.minecraft.client.texture.AbstractTexture;
 import net.minecraft.client.texture.TextureManager;
@@ -14,7 +14,7 @@ import java.io.IOException;
 import java.util.Map;
 
 @Mixin(TextureManager.class)
-public class TextureManagerMixin implements ScaldingResourceReloader {
+public class TextureManagerMixin implements HotReloadPlugin {
     @Shadow @Final private Map<Identifier, AbstractTexture> textures;
 
     @Override
