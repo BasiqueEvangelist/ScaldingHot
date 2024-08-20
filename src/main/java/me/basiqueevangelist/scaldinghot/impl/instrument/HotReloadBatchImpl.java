@@ -94,8 +94,6 @@ public class HotReloadBatchImpl implements HotReloadBatch {
     }
 
     public void fileAdded(Path path) {
-        ScaldingHot.LOGGER.info("+{}", path);
-
         Identifier id = tryConvert(path);
         if (id == null) return;
 
@@ -106,8 +104,6 @@ public class HotReloadBatchImpl implements HotReloadBatch {
     }
 
     public void fileModified(Path path) {
-        ScaldingHot.LOGGER.info("~{}", path);
-
         Identifier id = tryConvert(path);
         if (id == null) return;
 
@@ -119,8 +115,6 @@ public class HotReloadBatchImpl implements HotReloadBatch {
     }
 
     public void fileRemoved(Path path) {
-        ScaldingHot.LOGGER.info("-{}", path);
-
         Identifier id = tryConvert(path);
         if (id == null) return;
 
