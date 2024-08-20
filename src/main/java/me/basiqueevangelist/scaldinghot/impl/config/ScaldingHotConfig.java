@@ -1,4 +1,4 @@
-package me.basiqueevangelist.scaldinghot.config;
+package me.basiqueevangelist.scaldinghot.impl.config;
 
 import java.util.HashMap;
 import java.util.List;

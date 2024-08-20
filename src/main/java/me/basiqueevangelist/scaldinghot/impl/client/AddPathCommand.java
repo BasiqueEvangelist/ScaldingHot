@@ -1,4 +1,4 @@
-package me.basiqueevangelist.scaldinghot.client;
+package me.basiqueevangelist.scaldinghot.impl.client;
 
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.StringArgumentType;
@@ -6,7 +6,7 @@ import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
 import com.mojang.brigadier.suggestion.Suggestions;
 import com.mojang.brigadier.suggestion.SuggestionsBuilder;
-import me.basiqueevangelist.scaldinghot.ScaldingHot;
+import me.basiqueevangelist.scaldinghot.impl.ScaldingHot;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.command.CommandRegistryAccess;

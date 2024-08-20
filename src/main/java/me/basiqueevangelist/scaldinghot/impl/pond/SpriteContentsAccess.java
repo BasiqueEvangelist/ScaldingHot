@@ -1,4 +1,4 @@
-package me.basiqueevangelist.scaldinghot.pond;
+package me.basiqueevangelist.scaldinghot.impl.pond;
 
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.Nullable;

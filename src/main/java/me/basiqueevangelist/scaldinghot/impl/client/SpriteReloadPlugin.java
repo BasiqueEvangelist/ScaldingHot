@@ -1,12 +1,12 @@
-package me.basiqueevangelist.scaldinghot.client;
+package me.basiqueevangelist.scaldinghot.impl.client;
 
-import me.basiqueevangelist.scaldinghot.HotReloadPlugin;
-import me.basiqueevangelist.scaldinghot.ScaldingHot;
+import me.basiqueevangelist.scaldinghot.api.HotReloadPlugin;
+import me.basiqueevangelist.scaldinghot.impl.ScaldingHot;
 import me.basiqueevangelist.scaldinghot.api.HotReloadBatch;
 import me.basiqueevangelist.scaldinghot.mixin.client.SpriteAccessor;
 import me.basiqueevangelist.scaldinghot.mixin.client.SpriteAtlasTextureAccessor;
 import me.basiqueevangelist.scaldinghot.mixin.client.TextureManagerAccessor;
-import me.basiqueevangelist.scaldinghot.pond.SpriteContentsAccess;
+import me.basiqueevangelist.scaldinghot.impl.pond.SpriteContentsAccess;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.texture.SpriteAtlasTexture;
 import net.minecraft.client.texture.SpriteLoader;

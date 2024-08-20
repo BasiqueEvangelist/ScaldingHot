@@ -1,6 +1,6 @@
 package me.basiqueevangelist.scaldinghot.mixin;
 
-import me.basiqueevangelist.scaldinghot.pond.ResourceManagerAccess;
+import me.basiqueevangelist.scaldinghot.impl.pond.ResourceManagerAccess;
 import net.minecraft.resource.LifecycledResourceManagerImpl;
 import net.minecraft.resource.ResourcePack;
 import net.minecraft.resource.ResourceType;

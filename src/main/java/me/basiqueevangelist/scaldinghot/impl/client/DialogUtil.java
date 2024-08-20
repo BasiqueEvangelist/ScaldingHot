@@ -1,4 +1,4 @@
-package me.basiqueevangelist.scaldinghot.client;
+package me.basiqueevangelist.scaldinghot.impl.client;
 
 import org.lwjgl.util.tinyfd.TinyFileDialogs;
 

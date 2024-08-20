@@ -1,4 +1,4 @@
-package me.basiqueevangelist.scaldinghot.instrument;
+package me.basiqueevangelist.scaldinghot.impl.instrument;
 
 import net.fabricmc.fabric.api.resource.IdentifiableResourceReloadListener;
 import net.minecraft.resource.ResourceReloader;

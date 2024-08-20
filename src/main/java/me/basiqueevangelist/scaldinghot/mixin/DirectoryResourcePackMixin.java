@@ -1,6 +1,6 @@
 package me.basiqueevangelist.scaldinghot.mixin;
 
-import me.basiqueevangelist.scaldinghot.ScaldingResourcePack;
+import me.basiqueevangelist.scaldinghot.api.ScaldingResourcePack;
 import net.minecraft.resource.DirectoryResourcePack;
 import net.minecraft.resource.ResourceType;
 import net.minecraft.util.Identifier;

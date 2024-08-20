@@ -1,6 +1,6 @@
 package me.basiqueevangelist.scaldinghot.mixin;
 
-import me.basiqueevangelist.scaldinghot.pond.ResourceAccess;
+import me.basiqueevangelist.scaldinghot.impl.pond.ResourceAccess;
 import net.minecraft.resource.Resource;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.Nullable;

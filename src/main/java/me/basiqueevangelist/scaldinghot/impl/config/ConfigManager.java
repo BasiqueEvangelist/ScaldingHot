@@ -1,4 +1,4 @@
-package me.basiqueevangelist.scaldinghot.config;
+package me.basiqueevangelist.scaldinghot.impl.config;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -31,7 +31,7 @@ public class ConfigManager {
         if (Files.exists(confPath)) {
             try (var reader = Files.newBufferedReader(confPath)) {
                 config = GSON.fromJson(reader, ScaldingHotConfig.class);
-            } catch (IOException | JsonParseException e) {
+            } catch (Exception e) {
                 LOGGER.error("Could not load config file!", e);
             }
         } else {

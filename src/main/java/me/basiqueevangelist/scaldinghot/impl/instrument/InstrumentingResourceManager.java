@@ -1,7 +1,8 @@
-package me.basiqueevangelist.scaldinghot.instrument;
+package me.basiqueevangelist.scaldinghot.impl.instrument;
 
-import me.basiqueevangelist.scaldinghot.ScaldingHot;
-import me.basiqueevangelist.scaldinghot.pond.ResourceManagerAccess;
+import me.basiqueevangelist.scaldinghot.impl.ScaldingHot;
+import me.basiqueevangelist.scaldinghot.impl.ScaldingRegistry;
+import me.basiqueevangelist.scaldinghot.impl.pond.ResourceManagerAccess;
 import net.minecraft.resource.*;
 import net.minecraft.util.Identifier;
 
@@ -24,7 +25,7 @@ public class InstrumentingResourceManager implements ResourceManager {
 
     public static ResourceManager wrap(ResourceManager manager, ResourceReloader reloader) {
         if (!(manager instanceof ResourceManagerAccess access)) return manager;
-        if (!ScaldingHot.isHotReloadable(reloader)) return manager;
+        if (!ScaldingRegistry.isHotReloadable(reloader)) return manager;
 
         return new InstrumentingResourceManager(manager, reloader, access.scaldinghot$type());
     }

@@ -15,10 +15,10 @@
 	"environment": "*",
 	"entrypoints": {
 		"main": [
-			"me.basiqueevangelist.scaldinghot.ScaldingHot"
+			"me.basiqueevangelist.scaldinghot.impl.ScaldingHot"
 		],
 		"client": [
-			"me.basiqueevangelist.scaldinghot.client.ScaldingHotClient"
+            "me.basiqueevangelist.scaldinghot.impl.client.ScaldingHotClient"
 		]
 	},
 	"mixins": [

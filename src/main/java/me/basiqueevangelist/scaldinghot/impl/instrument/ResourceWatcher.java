@@ -1,7 +1,7 @@
-package me.basiqueevangelist.scaldinghot.instrument;
+package me.basiqueevangelist.scaldinghot.impl.instrument;
 
-import me.basiqueevangelist.scaldinghot.ScaldingHot;
-import me.basiqueevangelist.scaldinghot.ScaldingResourcePack;
+import me.basiqueevangelist.scaldinghot.impl.ScaldingHot;
+import me.basiqueevangelist.scaldinghot.api.ScaldingResourcePack;
 import net.minecraft.resource.ResourcePack;
 import net.minecraft.resource.ResourceType;
 
@@ -117,8 +117,8 @@ public class ResourceWatcher {
                 }
 
                 key.reset();
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
+            } catch (Exception e) {
+                ScaldingHot.LOGGER.error("Caught error in resource watch thread", e);
             }
         }
     }

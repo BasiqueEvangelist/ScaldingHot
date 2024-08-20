@@ -1,9 +1,9 @@
 package me.basiqueevangelist.scaldinghot.mixin;
 
 import com.llamalad7.mixinextras.sugar.Local;
-import me.basiqueevangelist.scaldinghot.instrument.InstrumentingResourceManager;
-import me.basiqueevangelist.scaldinghot.instrument.ResourceWatcher;
-import me.basiqueevangelist.scaldinghot.pond.ResourceManagerAccess;
+import me.basiqueevangelist.scaldinghot.impl.instrument.InstrumentingResourceManager;
+import me.basiqueevangelist.scaldinghot.impl.instrument.ResourceWatcher;
+import me.basiqueevangelist.scaldinghot.impl.pond.ResourceManagerAccess;
 import net.minecraft.resource.ResourceManager;
 import net.minecraft.resource.ResourceReload;
 import net.minecraft.resource.ResourceReloader;

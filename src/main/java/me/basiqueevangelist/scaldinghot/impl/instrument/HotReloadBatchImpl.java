@@ -1,10 +1,11 @@
-package me.basiqueevangelist.scaldinghot.instrument;
+package me.basiqueevangelist.scaldinghot.impl.instrument;
 
-import me.basiqueevangelist.scaldinghot.HotReloadPlugin;
-import me.basiqueevangelist.scaldinghot.ScaldingHot;
-import me.basiqueevangelist.scaldinghot.ScaldingResourcePack;
+import me.basiqueevangelist.scaldinghot.api.HotReloadPlugin;
+import me.basiqueevangelist.scaldinghot.impl.ScaldingHot;
+import me.basiqueevangelist.scaldinghot.api.ScaldingResourcePack;
 import me.basiqueevangelist.scaldinghot.api.HotReloadBatch;
-import me.basiqueevangelist.scaldinghot.client.ScaldingHotClient;
+import me.basiqueevangelist.scaldinghot.impl.ScaldingRegistry;
+import me.basiqueevangelist.scaldinghot.impl.client.ScaldingHotClient;
 import net.minecraft.resource.*;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.Unit;
@@ -28,6 +29,8 @@ public class HotReloadBatchImpl implements HotReloadBatch {
     private final Set<Identifier> addedResources = new HashSet<>();
     private final Set<Identifier> modifiedResources = new HashSet<>();
     private final Set<Identifier> removedResources = new HashSet<>();
+
+    private final List<Runnable> pendingTasks = new ArrayList<>();
 
     private HotReloadBatchImpl(ResourceType type) {
         this.type = type;
@@ -78,6 +81,16 @@ public class HotReloadBatchImpl implements HotReloadBatch {
             case CLIENT_RESOURCES -> ScaldingHotClient.getClientResourceManager();
             case SERVER_DATA -> ScaldingHot.SERVER.getResourceManager();
         };
+    }
+
+    @Override
+    public ResourceType type() {
+        return this.type;
+    }
+
+    @Override
+    public void queueFinishTask(Runnable task) {
+        this.pendingTasks.add(task);
     }
 
     public void fileAdded(Path path) {
@@ -173,10 +186,18 @@ public class HotReloadBatchImpl implements HotReloadBatch {
 
                 ScaldingHot.LOGGER.info("commiting changes: {}", sb);
 
+                RuntimeException reloadFailed = new RuntimeException("Hot reload plugins failed to reload");
+                boolean fail = false;
+
                 List<ResourceReloader> neededReloaders = new ArrayList<>();
 
-                for (var plugin : ScaldingHot.listPlugins(this.type)) {
-                    plugin.onHotReload(this);
+                for (var plugin : ScaldingRegistry.listPlugins(this.type)) {
+                    try {
+                        plugin.onHotReload(this);
+                    } catch (Exception e) {
+                        reloadFailed.addSuppressed(e);
+                        fail = true;
+                    }
                 }
 
                 outer:
@@ -184,7 +205,12 @@ public class HotReloadBatchImpl implements HotReloadBatch {
                     if (data.getValue().type != this.type) continue;
 
                     if (data.getKey() instanceof HotReloadPlugin scalding) {
-                        scalding.onHotReload(HotReloadBatchImpl.this);
+                        try {
+                            scalding.onHotReload(HotReloadBatchImpl.this);
+                        } catch (Exception e) {
+                            reloadFailed.addSuppressed(e);
+                            fail = true;
+                        }
                     }
 
                     for (var id : changedIds) {
@@ -197,6 +223,10 @@ public class HotReloadBatchImpl implements HotReloadBatch {
 
                 if (neededReloaders.isEmpty()) {
                     return CompletableFuture.completedFuture(null);
+                }
+
+                if (fail) {
+                    throw reloadFailed;
                 }
 
                 ScaldingHot.LOGGER.info("Reloading {}", neededReloaders.stream().map(ResourceReloader::getName).collect(Collectors.joining(", ")));
@@ -220,6 +250,15 @@ public class HotReloadBatchImpl implements HotReloadBatch {
                         }
                     });
             })
+            .thenRunAsync(() -> {
+                for (var task : pendingTasks) {
+                    try {
+                        task.run();
+                    } catch (Exception e) {
+                        ScaldingHot.LOGGER.error("Finish-up hot reload task failed!", e);
+                    }
+                }
+            }, getExecutor())
             .exceptionally(e -> {
                 ScaldingHot.LOGGER.error("Hot reload failed", e);
 
@@ -231,6 +270,7 @@ public class HotReloadBatchImpl implements HotReloadBatch {
                 addedResources.clear();
                 modifiedResources.clear();
                 removedResources.clear();
+                pendingTasks.clear();
             });
     }
 }

@@ -1,7 +1,7 @@
-package me.basiqueevangelist.scaldinghot.client;
+package me.basiqueevangelist.scaldinghot.impl.client;
 
-import me.basiqueevangelist.scaldinghot.ScaldingHot;
-import me.basiqueevangelist.scaldinghot.instrument.ResourceWatcher;
+import me.basiqueevangelist.scaldinghot.api.ScaldingApi;
+import me.basiqueevangelist.scaldinghot.impl.instrument.ResourceWatcher;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
 import net.minecraft.client.MinecraftClient;
@@ -19,10 +19,10 @@ public class ScaldingHotClient implements ClientModInitializer {
 
         ResourceWatcher.CLIENT_RESOURCES.init();
 
-        ScaldingHot.markAsHotReloadable(LanguageManager.class);
-        ScaldingHot.markAsHotReloadable(TextureManager.class);
+        ScaldingApi.enableAutomaticHotReloading(LanguageManager.class);
+        ScaldingApi.enableAutomaticHotReloading(TextureManager.class);
 
-        ScaldingHot.addHotReloadPlugin(ResourceType.CLIENT_RESOURCES, new SpriteReloadPlugin());
+        ScaldingApi.addPlugin(ResourceType.CLIENT_RESOURCES, new SpriteReloadPlugin());
     }
 
     public static Executor getClientExecutor() {

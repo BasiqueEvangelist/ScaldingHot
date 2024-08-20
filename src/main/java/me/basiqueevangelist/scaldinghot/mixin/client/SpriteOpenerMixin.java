@@ -1,7 +1,7 @@
 package me.basiqueevangelist.scaldinghot.mixin.client;
 
-import me.basiqueevangelist.scaldinghot.pond.ResourceAccess;
-import me.basiqueevangelist.scaldinghot.pond.SpriteContentsAccess;
+import me.basiqueevangelist.scaldinghot.impl.pond.ResourceAccess;
+import me.basiqueevangelist.scaldinghot.impl.pond.SpriteContentsAccess;
 import net.minecraft.client.texture.SpriteContents;
 import net.minecraft.client.texture.SpriteOpener;
 import net.minecraft.resource.Resource;
