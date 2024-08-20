@@ -1,9 +1,11 @@
 package me.basiqueevangelist.scaldinghot.impl.client;
 
 import me.basiqueevangelist.scaldinghot.api.ScaldingApi;
+import me.basiqueevangelist.scaldinghot.impl.client.compat.lavender.LavenderCompatPlugin;
 import me.basiqueevangelist.scaldinghot.impl.instrument.ResourceWatcher;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
+import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.resource.language.LanguageManager;
 import net.minecraft.client.texture.TextureManager;
@@ -23,6 +25,9 @@ public class ScaldingHotClient implements ClientModInitializer {
         ScaldingApi.enableAutomaticHotReloading(TextureManager.class);
 
         ScaldingApi.addPlugin(ResourceType.CLIENT_RESOURCES, new SpriteReloadPlugin());
+
+        if (FabricLoader.getInstance().isModLoaded("lavender"))
+            LavenderCompatPlugin.init();
     }
 
     public static Executor getClientExecutor() {
