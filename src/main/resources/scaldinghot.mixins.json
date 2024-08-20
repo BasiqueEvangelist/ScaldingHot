@@ -2,6 +2,7 @@
     "required": true,
     "package": "me.basiqueevangelist.scaldinghot.mixin",
     "compatibilityLevel": "JAVA_21",
+    "plugin": "com.moulberry.mixinconstraints.ConstraintsMixinPlugin",
     "mixins": [
         "DirectoryResourcePackMixin",
         "LifecycledResourceManagerImplMixin",
@@ -15,11 +16,14 @@
         "defaultRequire": 1
     },
     "client": [
+        "client.ScreenAccessor",
         "client.SpriteAccessor",
         "client.SpriteAtlasTextureAccessor",
         "client.SpriteContentsMixin",
         "client.SpriteOpenerMixin",
         "client.TextureManagerAccessor",
-        "client.TextureManagerMixin"
+        "client.TextureManagerMixin",
+        "client.owo.BaseUIModelHandledScreenMixin",
+        "client.owo.BaseUIModelScreenMixin"
     ]
 }
