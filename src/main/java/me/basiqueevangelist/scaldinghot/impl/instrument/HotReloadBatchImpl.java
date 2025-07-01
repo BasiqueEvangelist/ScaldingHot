@@ -134,7 +134,7 @@ public class HotReloadBatchImpl implements HotReloadBatch {
             settleSent = true;
 
             new CompletableFuture<Void>()
-                .completeOnTimeout(null, 250, TimeUnit.MILLISECONDS)
+                .completeOnTimeout(null, 500, TimeUnit.MILLISECONDS)
                 .thenRunAsync(this::settle, getExecutor());
         }
     }
