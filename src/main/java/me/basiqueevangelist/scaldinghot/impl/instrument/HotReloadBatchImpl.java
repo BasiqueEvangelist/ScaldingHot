@@ -6,6 +6,7 @@ import me.basiqueevangelist.scaldinghot.api.ScaldingResourcePack;
 import me.basiqueevangelist.scaldinghot.api.HotReloadBatch;
 import me.basiqueevangelist.scaldinghot.impl.ScaldingRegistry;
 import me.basiqueevangelist.scaldinghot.impl.client.ScaldingHotClient;
+import me.basiqueevangelist.scaldinghot.impl.pond.ResourceManagerAccess;
 import net.minecraft.resource.*;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.Unit;
@@ -179,6 +180,10 @@ public class HotReloadBatchImpl implements HotReloadBatch {
                 }
 
                 ScaldingHot.LOGGER.info("commiting changes: {}", sb);
+
+                if (resourceManager() instanceof ResourceManagerAccess access) {
+                    access.scaldinghot$recreate();
+                }
 
                 RuntimeException reloadFailed = new RuntimeException("Hot reload plugins failed to reload");
                 boolean fail = false;

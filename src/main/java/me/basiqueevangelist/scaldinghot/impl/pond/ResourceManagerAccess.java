@@ -4,4 +4,6 @@ import net.minecraft.resource.ResourceType;
 
 public interface ResourceManagerAccess {
     ResourceType scaldinghot$type();
+
+    void scaldinghot$recreate();
 }
