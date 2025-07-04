@@ -6,8 +6,8 @@ import me.basiqueevangelist.scaldinghot.api.ScaldingResourcePack;
 import net.fabricmc.fabric.api.resource.ResourcePackActivationType;
 import net.fabricmc.fabric.impl.resource.loader.ModNioResourcePack;
 import net.fabricmc.loader.api.ModContainer;
-import net.minecraft.resource.ResourceType;
-import net.minecraft.util.Identifier;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.packs.PackType;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -25,7 +25,7 @@ public abstract class ModNioResourcePackMixin implements ScaldingResourcePack {
     @Shadow @Final private List<Path> basePaths;
 
     @ModifyExpressionValue(method = "create", at = @At(value = "INVOKE", target = "Lnet/fabricmc/loader/api/ModContainer;getRootPaths()Ljava/util/List;"))
-    private static List<Path> injectPaths(List<Path> original, String id, ModContainer mod, String subPath, ResourceType type, ResourcePackActivationType activationType, boolean modBundled) {
+    private static List<Path> injectPaths(List<Path> original, String id, ModContainer mod, String subPath, PackType type, ResourcePackActivationType activationType, boolean modBundled) {
         String modid = mod.getMetadata().getId();
         List<String> additionalPaths = ScaldingHot.CONFIG.get().modResourcePaths.get(modid);
 
@@ -41,7 +41,7 @@ public abstract class ModNioResourcePackMixin implements ScaldingResourcePack {
     }
 
     @Override
-    public List<Path> getRootPaths(ResourceType type) {
+    public List<Path> getRootPaths(PackType type) {
         List<Path> paths = new ArrayList<>();
 
         for (Path basePath : basePaths) {
@@ -54,7 +54,7 @@ public abstract class ModNioResourcePackMixin implements ScaldingResourcePack {
     }
 
     @Override
-    public @Nullable Identifier pathToResourceId(ResourceType type, Path path) {
+    public @Nullable ResourceLocation pathToResourceId(PackType type, Path path) {
         for (Path basePath : this.basePaths) {
             String separator = basePath.getFileSystem().getSeparator();
 
@@ -67,7 +67,7 @@ public abstract class ModNioResourcePackMixin implements ScaldingResourcePack {
             Path nsPath = typePath.resolve(namespace);
 
             String filename = nsPath.relativize(path).toString().replace(separator, "/");
-            return Identifier.tryParse(namespace, filename);
+            return ResourceLocation.tryBuild(namespace, filename);
         }
 
         return null;

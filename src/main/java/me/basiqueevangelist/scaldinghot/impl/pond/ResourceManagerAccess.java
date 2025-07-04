@@ -1,9 +1,9 @@
 package me.basiqueevangelist.scaldinghot.impl.pond;
 
-import net.minecraft.resource.ResourceType;
+import net.minecraft.server.packs.PackType;
 
 public interface ResourceManagerAccess {
-    ResourceType scaldinghot$type();
+    PackType scaldinghot$type();
 
     void scaldinghot$recreate();
 }

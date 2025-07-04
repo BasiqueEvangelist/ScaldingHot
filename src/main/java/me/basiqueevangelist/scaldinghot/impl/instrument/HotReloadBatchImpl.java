@@ -7,37 +7,43 @@ import me.basiqueevangelist.scaldinghot.api.HotReloadBatch;
 import me.basiqueevangelist.scaldinghot.impl.ScaldingRegistry;
 import me.basiqueevangelist.scaldinghot.impl.client.ScaldingHotClient;
 import me.basiqueevangelist.scaldinghot.impl.pond.ResourceManagerAccess;
+import net.minecraft.Util;
 import net.minecraft.resource.*;
-import net.minecraft.util.Identifier;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.packs.PackResources;
+import net.minecraft.server.packs.PackType;
+import net.minecraft.server.packs.resources.PreparableReloadListener;
+import net.minecraft.server.packs.resources.ResourceManager;
+import net.minecraft.server.packs.resources.SimpleReloadInstance;
 import net.minecraft.util.Unit;
-import net.minecraft.util.Util;
 import org.jetbrains.annotations.Nullable;
 
 import java.nio.file.Path;
 import java.util.*;
+import java.util.Map.Entry;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 public class HotReloadBatchImpl implements HotReloadBatch {
-    public static final HotReloadBatchImpl CLIENT_RESOURCES = new HotReloadBatchImpl(ResourceType.CLIENT_RESOURCES);
-    public static final HotReloadBatchImpl SERVER_DATA = new HotReloadBatchImpl(ResourceType.SERVER_DATA);
+    public static final HotReloadBatchImpl CLIENT_RESOURCES = new HotReloadBatchImpl(PackType.CLIENT_RESOURCES);
+    public static final HotReloadBatchImpl SERVER_DATA = new HotReloadBatchImpl(PackType.SERVER_DATA);
 
-    private final ResourceType type;
+    private final PackType type;
     private boolean settleSent = false;
 
-    private final Set<Identifier> addedResources = new HashSet<>();
-    private final Set<Identifier> modifiedResources = new HashSet<>();
-    private final Set<Identifier> removedResources = new HashSet<>();
+    private final Set<ResourceLocation> addedResources = new HashSet<>();
+    private final Set<ResourceLocation> modifiedResources = new HashSet<>();
+    private final Set<ResourceLocation> removedResources = new HashSet<>();
 
     private final List<Runnable> pendingTasks = new ArrayList<>();
 
-    private HotReloadBatchImpl(ResourceType type) {
+    private HotReloadBatchImpl(PackType type) {
         this.type = type;
     }
 
-    public static HotReloadBatchImpl get(ResourceType type) {
+    public static HotReloadBatchImpl get(PackType type) {
         return switch (type) {
             case CLIENT_RESOURCES -> CLIENT_RESOURCES;
             case SERVER_DATA -> SERVER_DATA;
@@ -45,9 +51,9 @@ public class HotReloadBatchImpl implements HotReloadBatch {
     }
 
     @Override
-    public Collection<Identifier> changedResources() {
+    public Collection<ResourceLocation> changedResources() {
         // TODO: make this good.
-        Set<Identifier> changed = new HashSet<>();
+        Set<ResourceLocation> changed = new HashSet<>();
         changed.addAll(addedResources);
         changed.addAll(modifiedResources);
         changed.addAll(removedResources);
@@ -55,17 +61,17 @@ public class HotReloadBatchImpl implements HotReloadBatch {
     }
 
     @Override
-    public Set<Identifier> addedResources() {
+    public Set<ResourceLocation> addedResources() {
         return addedResources;
     }
 
     @Override
-    public Set<Identifier> modifiedResources() {
+    public Set<ResourceLocation> modifiedResources() {
         return modifiedResources;
     }
 
     @Override
-    public Set<Identifier> removedResources() {
+    public Set<ResourceLocation> removedResources() {
         return removedResources;
     }
 
@@ -85,7 +91,7 @@ public class HotReloadBatchImpl implements HotReloadBatch {
     }
 
     @Override
-    public ResourceType type() {
+    public PackType type() {
         return this.type;
     }
 
@@ -95,7 +101,7 @@ public class HotReloadBatchImpl implements HotReloadBatch {
     }
 
     public void fileAdded(Path path) {
-        Identifier id = tryConvert(path);
+        ResourceLocation id = tryConvert(path);
         if (id == null) return;
 
         removedResources.remove(id);
@@ -105,7 +111,7 @@ public class HotReloadBatchImpl implements HotReloadBatch {
     }
 
     public void fileModified(Path path) {
-        Identifier id = tryConvert(path);
+        ResourceLocation id = tryConvert(path);
         if (id == null) return;
 
         if (addedResources.contains(id)) return;
@@ -116,7 +122,7 @@ public class HotReloadBatchImpl implements HotReloadBatch {
     }
 
     public void fileRemoved(Path path) {
-        Identifier id = tryConvert(path);
+        ResourceLocation id = tryConvert(path);
         if (id == null) return;
 
         if (addedResources.contains(id)) {
@@ -140,11 +146,11 @@ public class HotReloadBatchImpl implements HotReloadBatch {
         }
     }
 
-    private @Nullable Identifier tryConvert(Path path) {
-        for (var pack : (Iterable<ResourcePack>) resourceManager().streamResourcePacks()::iterator) {
+    private @Nullable ResourceLocation tryConvert(Path path) {
+        for (var pack : (Iterable<PackResources>) resourceManager().listPacks()::iterator) {
             if (!(pack instanceof ScaldingResourcePack scalding)) continue;
 
-            Identifier id = scalding.pathToResourceId(this.type, path);
+            ResourceLocation id = scalding.pathToResourceId(this.type, path);
 
             if (id == null) continue;
 
@@ -159,7 +165,7 @@ public class HotReloadBatchImpl implements HotReloadBatch {
     private void settle() {
         CompletableFuture.completedFuture(null)
             .thenCompose(ignored -> {
-                Set<Identifier> changedIds = new HashSet<>();
+                Set<ResourceLocation> changedIds = new HashSet<>();
 
                 changedIds.addAll(addedResources);
                 changedIds.addAll(modifiedResources);
@@ -188,7 +194,7 @@ public class HotReloadBatchImpl implements HotReloadBatch {
                 RuntimeException reloadFailed = new RuntimeException("Hot reload plugins failed to reload");
                 boolean fail = false;
 
-                List<ResourceReloader> neededReloaders = new ArrayList<>();
+                List<PreparableReloadListener> neededReloaders = new ArrayList<>();
 
                 for (var plugin : ScaldingRegistry.listPlugins(this.type)) {
                     try {
@@ -228,24 +234,24 @@ public class HotReloadBatchImpl implements HotReloadBatch {
                     throw reloadFailed;
                 }
 
-                ScaldingHot.LOGGER.info("Reloading {}", neededReloaders.stream().map(ResourceReloader::getName).collect(Collectors.joining(", ")));
+                ScaldingHot.LOGGER.info("Reloading {}", neededReloaders.stream().map(PreparableReloadListener::getName).collect(Collectors.joining(", ")));
 
-                List<ResourceReloader> automaticReloaders = new ArrayList<>(neededReloaders);
+                List<PreparableReloadListener> automaticReloaders = new ArrayList<>(neededReloaders);
 
                 automaticReloaders.removeIf(x -> x instanceof HotReloadPlugin);
 
-                return SimpleResourceReload.create(
+                return SimpleReloadInstance.of(
                         resourceManager(),
                         automaticReloaders,
-                        Util.getMainWorkerExecutor(),
+                        Util.backgroundExecutor(),
                         getExecutor(),
                         CompletableFuture.completedFuture(Unit.INSTANCE)
                     )
-                    .whenComplete()
+                    .done()
                     .thenRunAsync(() -> {
-                        if (type == ResourceType.SERVER_DATA) {
-                            ScaldingHot.SERVER.getPlayerManager().saveAllPlayerData();
-                            ScaldingHot.SERVER.getPlayerManager().onDataPacksReloaded();
+                        if (type == PackType.SERVER_DATA) {
+                            ScaldingHot.SERVER.getPlayerList().saveAll();
+                            ScaldingHot.SERVER.getPlayerList().reloadResources();
                         }
                     });
             })

@@ -1,15 +1,15 @@
 package me.basiqueevangelist.scaldinghot.api;
 
-import net.minecraft.resource.ResourcePack;
-import net.minecraft.resource.ResourceType;
-import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.Nullable;
 
 import java.nio.file.Path;
 import java.util.List;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.packs.PackResources;
+import net.minecraft.server.packs.PackType;
 
 /**
- * An optional interface for {@link ResourcePack} implementation to add support for hot reloading.
+ * An optional interface for {@link PackResources} implementation to add support for hot reloading.
  */
 public interface ScaldingResourcePack {
     /**
@@ -17,7 +17,7 @@ public interface ScaldingResourcePack {
      * @param type the pack type use
      * @return all NIO paths that are used by this pack for this pack type
      */
-    List<Path> getRootPaths(ResourceType type);
+    List<Path> getRootPaths(PackType type);
 
     /**
      * Converts an NIO path into a resource identifier.
@@ -25,5 +25,5 @@ public interface ScaldingResourcePack {
      * @param path the path to convert
      * @return the corresponding resource identifier, or {@code null} if there is none
      */
-    @Nullable Identifier pathToResourceId(ResourceType type, Path path);
+    @Nullable ResourceLocation pathToResourceId(PackType type, Path path);
 }

@@ -1,15 +1,15 @@
 package me.basiqueevangelist.scaldinghot.mixin.client;
 
-import net.minecraft.client.texture.Sprite;
-import net.minecraft.client.texture.SpriteAtlasTexture;
-import net.minecraft.util.Identifier;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.gen.Accessor;
 
 import java.util.Map;
+import net.minecraft.client.renderer.texture.TextureAtlas;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.resources.ResourceLocation;
 
-@Mixin(SpriteAtlasTexture.class)
+@Mixin(TextureAtlas.class)
 public interface SpriteAtlasTextureAccessor {
     @Accessor
-    Map<Identifier, Sprite> getSprites();
+    Map<ResourceLocation, TextureAtlasSprite> getSprites();
 }

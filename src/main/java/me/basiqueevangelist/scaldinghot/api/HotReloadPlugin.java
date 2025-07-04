@@ -1,15 +1,15 @@
 package me.basiqueevangelist.scaldinghot.api;
 
-import net.minecraft.resource.ResourceReloader;
-import net.minecraft.resource.ResourceType;
+import net.minecraft.server.packs.PackType;
+import net.minecraft.server.packs.resources.PreparableReloadListener;
 
 /**
  * An extension that plugs into the hot reload mechanism.
  * <p>
- * If a {@link ResourceReloader} implements this class, it will be automatically discovered, while freestanding plugins
+ * If a {@link PreparableReloadListener} implements this class, it will be automatically discovered, while freestanding plugins
  * need to be manually registered.
  * 
- * @see ScaldingApi#addPlugin(ResourceType, HotReloadPlugin) 
+ * @see ScaldingApi#addPlugin(PackType, HotReloadPlugin) 
  */
 public interface HotReloadPlugin {
     /**

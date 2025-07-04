@@ -6,26 +6,29 @@ import me.basiqueevangelist.scaldinghot.api.HotReloadBatch;
 import me.basiqueevangelist.scaldinghot.mixin.client.SpriteAccessor;
 import me.basiqueevangelist.scaldinghot.mixin.client.SpriteAtlasTextureAccessor;
 import me.basiqueevangelist.scaldinghot.mixin.client.TextureManagerAccessor;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.texture.SpriteContents;
+import net.minecraft.client.renderer.texture.SpriteLoader;
+import net.minecraft.client.renderer.texture.TextureAtlas;
+import net.minecraft.client.renderer.texture.TextureManager;
+import net.minecraft.client.renderer.texture.atlas.SpriteResourceLoader;
+import net.minecraft.resources.ResourceLocation;
 import me.basiqueevangelist.scaldinghot.impl.pond.SpriteContentsAccess;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.texture.SpriteAtlasTexture;
-import net.minecraft.client.texture.SpriteLoader;
-import net.minecraft.client.texture.SpriteOpener;
-
 import java.io.IOException;
+import java.util.Map.Entry;
 
 public class SpriteReloadPlugin implements HotReloadPlugin {
     @Override
     public void onHotReload(HotReloadBatch batch) {
-        var client = MinecraftClient.getInstance();
+        var client = Minecraft.getInstance();
         var textures = client.getTextureManager();
-        var opener = SpriteOpener.create(SpriteLoader.METADATA_READERS);
+        var opener = SpriteResourceLoader.create(SpriteLoader.DEFAULT_METADATA_SECTIONS);
 
         for (var entry : ((TextureManagerAccessor) textures).getTextures().entrySet()) {
-            if (!(entry.getValue() instanceof SpriteAtlasTexture atlas)) continue;
+            if (!(entry.getValue() instanceof TextureAtlas atlas)) continue;
 
             for (var spriteEntry : ((SpriteAtlasTextureAccessor) atlas).getSprites().entrySet()) {
-                var contents = spriteEntry.getValue().getContents();
+                var contents = spriteEntry.getValue().contents();
                 var originalId = ((SpriteContentsAccess) contents).scaldinghot$originalId();
                 if (originalId == null) continue;
                 if (!batch.changedResources().contains(originalId)) continue;
@@ -34,14 +37,14 @@ public class SpriteReloadPlugin implements HotReloadPlugin {
                     var newSprite = opener.loadSprite(spriteEntry.getKey(), batch.resourceManager().getResourceOrThrow(originalId));
 
                     if (newSprite == null) continue;
-                    if (newSprite.getHeight() != contents.getHeight() || newSprite.getWidth() != contents.getHeight()) continue;
+                    if (newSprite.height() != contents.height() || newSprite.width() != contents.height()) continue;
 
                     ((SpriteAccessor) spriteEntry.getValue()).setContents(newSprite);
 
-                    atlas.bindTexture();
-                    spriteEntry.getValue().upload();
+                    atlas.bind();
+                    spriteEntry.getValue().uploadFirstFrame();
                 } catch (IOException e) {
-                    ScaldingHot.LOGGER.error("Couldn't hot reload sprite {} of {}", spriteEntry.getKey(), atlas.getId(), e);
+                    ScaldingHot.LOGGER.error("Couldn't hot reload sprite {} of {}", spriteEntry.getKey(), atlas.location(), e);
                 }
             }
         }

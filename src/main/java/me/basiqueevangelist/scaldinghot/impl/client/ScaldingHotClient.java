@@ -7,12 +7,11 @@ import me.basiqueevangelist.scaldinghot.impl.instrument.ResourceWatcher;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
 import net.fabricmc.loader.api.FabricLoader;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.resource.language.LanguageManager;
-import net.minecraft.client.texture.TextureManager;
-import net.minecraft.resource.ResourceManager;
-import net.minecraft.resource.ResourceType;
-
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.texture.TextureManager;
+import net.minecraft.client.resources.language.LanguageManager;
+import net.minecraft.server.packs.PackType;
+import net.minecraft.server.packs.resources.ResourceManager;
 import java.util.concurrent.Executor;
 
 public class ScaldingHotClient implements ClientModInitializer {
@@ -25,7 +24,7 @@ public class ScaldingHotClient implements ClientModInitializer {
         ScaldingApi.enableAutomaticHotReloading(LanguageManager.class);
         ScaldingApi.enableAutomaticHotReloading(TextureManager.class);
 
-        ScaldingApi.addPlugin(ResourceType.CLIENT_RESOURCES, new SpriteReloadPlugin());
+        ScaldingApi.addPlugin(PackType.CLIENT_RESOURCES, new SpriteReloadPlugin());
 
         if (FabricLoader.getInstance().isModLoaded("owo"))
             OwoCompat.init();
@@ -35,10 +34,10 @@ public class ScaldingHotClient implements ClientModInitializer {
     }
 
     public static Executor getClientExecutor() {
-        return MinecraftClient.getInstance();
+        return Minecraft.getInstance();
     }
 
     public static ResourceManager getClientResourceManager() {
-        return MinecraftClient.getInstance().getResourceManager();
+        return Minecraft.getInstance().getResourceManager();
     }
 }

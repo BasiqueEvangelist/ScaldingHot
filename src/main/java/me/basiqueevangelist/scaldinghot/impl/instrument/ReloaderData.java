@@ -1,10 +1,9 @@
 package me.basiqueevangelist.scaldinghot.impl.instrument;
 
 import net.fabricmc.fabric.api.resource.IdentifiableResourceReloadListener;
-import net.minecraft.resource.ResourceReloader;
-import net.minecraft.resource.ResourceType;
-import net.minecraft.util.Identifier;
-
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.packs.PackType;
+import net.minecraft.server.packs.resources.PreparableReloadListener;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.WeakHashMap;
@@ -12,13 +11,13 @@ import java.util.WeakHashMap;
 public class ReloaderData {
     private static final boolean LOG_ALL_ACCESSES = false;
 
-    public static final WeakHashMap<ResourceReloader, ReloaderData> RELOADER_TO_DATA = new WeakHashMap<>();
+    public static final WeakHashMap<PreparableReloadListener, ReloaderData> RELOADER_TO_DATA = new WeakHashMap<>();
 
     public final String reloaderName;
-    public final ResourceType type;
-    public final Set<Identifier> accessedResources = new HashSet<>();
+    public final PackType type;
+    public final Set<ResourceLocation> accessedResources = new HashSet<>();
 
-    public ReloaderData(ResourceReloader reloader, ResourceType type) {
+    public ReloaderData(PreparableReloadListener reloader, PackType type) {
         this.type = type;
         if (reloader instanceof IdentifiableResourceReloadListener identifiable) {
             reloaderName = identifiable.getFabricId().toString();
@@ -27,15 +26,15 @@ public class ReloaderData {
         }
     }
 
-    public static ReloaderData getForReloader(ResourceReloader reloader, ResourceType type) {
+    public static ReloaderData getForReloader(PreparableReloadListener reloader, PackType type) {
         return RELOADER_TO_DATA.computeIfAbsent(reloader, r -> new ReloaderData(r, type));
     }
 
-    public void markAccessed(Identifier id) {
+    public void markAccessed(ResourceLocation id) {
         accessedResources.add(id);
     }
 
-    public boolean isRelevant(Identifier id) {
+    public boolean isRelevant(ResourceLocation id) {
         for (var accessed : accessedResources) {
             if (!accessed.getNamespace().equals(id.getNamespace())) continue;
 

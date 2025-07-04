@@ -1,9 +1,9 @@
 package me.basiqueevangelist.scaldinghot.mixin;
 
 import me.basiqueevangelist.scaldinghot.api.ScaldingResourcePack;
-import net.minecraft.resource.DirectoryResourcePack;
-import net.minecraft.resource.ResourceType;
-import net.minecraft.util.Identifier;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.packs.PackType;
+import net.minecraft.server.packs.PathPackResources;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -12,17 +12,17 @@ import org.spongepowered.asm.mixin.Shadow;
 import java.nio.file.Path;
 import java.util.List;
 
-@Mixin(DirectoryResourcePack.class)
+@Mixin(PathPackResources.class)
 public class DirectoryResourcePackMixin implements ScaldingResourcePack {
     @Shadow @Final private Path root;
 
     @Override
-    public List<Path> getRootPaths(ResourceType type) {
+    public List<Path> getRootPaths(PackType type) {
         return List.of(root.resolve(type.getDirectory()));
     }
 
     @Override
-    public @Nullable Identifier pathToResourceId(ResourceType type, Path path) {
+    public @Nullable ResourceLocation pathToResourceId(PackType type, Path path) {
         String separator = this.root.getFileSystem().getSeparator();
         Path typePath = this.root.resolve(type.getDirectory());
 
@@ -33,6 +33,6 @@ public class DirectoryResourcePackMixin implements ScaldingResourcePack {
         Path nsPath = typePath.resolve(namespace);
 
         String filename = nsPath.relativize(path).toString().replace(separator, "/");
-        return Identifier.tryParse(namespace, filename);
+        return ResourceLocation.tryBuild(namespace, filename);
     }
 }

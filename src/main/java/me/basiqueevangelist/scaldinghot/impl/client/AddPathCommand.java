@@ -9,10 +9,9 @@ import com.mojang.brigadier.suggestion.SuggestionsBuilder;
 import me.basiqueevangelist.scaldinghot.impl.ScaldingHot;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import net.fabricmc.loader.api.FabricLoader;
-import net.minecraft.command.CommandRegistryAccess;
-import net.minecraft.command.CommandSource;
-import net.minecraft.text.Text;
-
+import net.minecraft.commands.CommandBuildContext;
+import net.minecraft.commands.SharedSuggestionProvider;
+import net.minecraft.network.chat.Component;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.concurrent.CompletableFuture;
@@ -21,9 +20,9 @@ import static net.fabricmc.fabric.api.client.command.v2.ClientCommandManager.arg
 import static net.fabricmc.fabric.api.client.command.v2.ClientCommandManager.literal;
 
 public class AddPathCommand {
-    private static final SimpleCommandExceptionType INVALID_MOD = new SimpleCommandExceptionType(Text.literal("No such mod"));
+    private static final SimpleCommandExceptionType INVALID_MOD = new SimpleCommandExceptionType(Component.literal("No such mod"));
 
-    public static void register(CommandDispatcher<FabricClientCommandSource> dispatcher, CommandRegistryAccess registries) {
+    public static void register(CommandDispatcher<FabricClientCommandSource> dispatcher, CommandBuildContext registries) {
         dispatcher.register(
             literal("scaldinghot")
                 .then(literal("add_path")
@@ -41,7 +40,7 @@ public class AddPathCommand {
                                     ScaldingHot.CONFIG.get().modResourcePaths.computeIfAbsent(modid, unused -> new ArrayList<>()).add(path);
                                     ScaldingHot.CONFIG.save();
 
-                                    ctx.getSource().sendFeedback(Text.literal("Added path `" + path + "` to `" + modid + "`'s resources"));
+                                    ctx.getSource().sendFeedback(Component.literal("Added path `" + path + "` to `" + modid + "`'s resources"));
                                 })
                                 .exceptionally(e -> {
                                     ScaldingHot.LOGGER.error("Failed to open select folder dialog", e);
@@ -53,6 +52,6 @@ public class AddPathCommand {
     }
 
     private static CompletableFuture<Suggestions> suggestMods(CommandContext<FabricClientCommandSource> ctx, SuggestionsBuilder builder) {
-        return CommandSource.suggestMatching(FabricLoader.getInstance().getAllMods().stream().map(x -> x.getMetadata().getId()), builder);
+        return SharedSuggestionProvider.suggest(FabricLoader.getInstance().getAllMods().stream().map(x -> x.getMetadata().getId()), builder);
     }
 }

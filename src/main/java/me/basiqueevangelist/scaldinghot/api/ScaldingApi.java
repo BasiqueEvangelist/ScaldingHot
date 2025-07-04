@@ -1,8 +1,8 @@
 package me.basiqueevangelist.scaldinghot.api;
 
 import me.basiqueevangelist.scaldinghot.impl.ScaldingRegistry;
-import net.minecraft.resource.ResourceReloader;
-import net.minecraft.resource.ResourceType;
+import net.minecraft.server.packs.PackType;
+import net.minecraft.server.packs.resources.PreparableReloadListener;
 
 public final class ScaldingApi {
     private ScaldingApi() { }
@@ -12,7 +12,7 @@ public final class ScaldingApi {
      * tracked, and if any of them changes, it will be invoked.
      * @param reloaderClass the class to enable hot reloading for
      */
-    public static <T extends ResourceReloader> void enableAutomaticHotReloading(Class<T> reloaderClass) {
+    public static <T extends PreparableReloadListener> void enableAutomaticHotReloading(Class<T> reloaderClass) {
         ScaldingRegistry.enableAutomaticHotReloading(reloaderClass);
     }
 
@@ -22,7 +22,7 @@ public final class ScaldingApi {
      * @param type the pack type to register for
      * @param plugin the plugin to register
      */
-    public static void addPlugin(ResourceType type, HotReloadPlugin plugin) {
+    public static void addPlugin(PackType type, HotReloadPlugin plugin) {
         ScaldingRegistry.addPlugin(type, plugin);
     }
 }

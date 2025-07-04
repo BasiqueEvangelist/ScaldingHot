@@ -1,10 +1,9 @@
 package me.basiqueevangelist.scaldinghot.impl.instrument;
 
 import me.basiqueevangelist.scaldinghot.impl.ScaldingHot;
+import net.minecraft.server.packs.PackResources;
+import net.minecraft.server.packs.PackType;
 import me.basiqueevangelist.scaldinghot.api.ScaldingResourcePack;
-import net.minecraft.resource.ResourcePack;
-import net.minecraft.resource.ResourceType;
-
 import java.io.IOException;
 import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
@@ -12,16 +11,16 @@ import java.util.*;
 
 public class ResourceWatcher {
 
-    public static final ResourceWatcher CLIENT_RESOURCES = new ResourceWatcher(ResourceType.CLIENT_RESOURCES);
-    public static final ResourceWatcher SERVER_DATA = new ResourceWatcher(ResourceType.SERVER_DATA);
+    public static final ResourceWatcher CLIENT_RESOURCES = new ResourceWatcher(PackType.CLIENT_RESOURCES);
+    public static final ResourceWatcher SERVER_DATA = new ResourceWatcher(PackType.SERVER_DATA);
 
     private final WatchService watchService;
-    private final ResourceType type;
+    private final PackType type;
     private final Map<Path, WatchKey> registeredKeys = new HashMap<>();
 
     private final Set<Path> existingPaths = new HashSet<>();
 
-    private ResourceWatcher(ResourceType type) {
+    private ResourceWatcher(PackType type) {
         this.type = type;
 
         try {
@@ -31,7 +30,7 @@ public class ResourceWatcher {
         }
     }
 
-    public static ResourceWatcher get(ResourceType type) {
+    public static ResourceWatcher get(PackType type) {
         return switch (type) {
             case CLIENT_RESOURCES -> CLIENT_RESOURCES;
             case SERVER_DATA -> SERVER_DATA;
@@ -45,7 +44,7 @@ public class ResourceWatcher {
             .start(this::thread);
     }
 
-    public void start(List<ResourcePack> packs) {
+    public void start(List<PackResources> packs) {
         registeredKeys.values().forEach(WatchKey::cancel);
         registeredKeys.clear();
 
