@@ -2,7 +2,7 @@
 	"schemaVersion": 1,
 	"id": "scaldinghot",
 	"version": "${version}",
-	"name": "Scalding Hot!",
+	"name": "Scalding Hot",
 	"description": "Hot reloading of client resources and server data",
 	"authors": [
 		"BasiqueEvangelist"
