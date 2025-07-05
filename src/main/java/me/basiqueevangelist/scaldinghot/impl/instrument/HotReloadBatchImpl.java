@@ -230,13 +230,7 @@ public class HotReloadBatchImpl implements HotReloadBatch {
                         getExecutor(),
                         CompletableFuture.completedFuture(Unit.INSTANCE)
                     )
-                    .done()
-                    .thenRunAsync(() -> {
-                        if (type == PackType.SERVER_DATA) {
-                            ScaldingHot.SERVER.getPlayerList().saveAll();
-                            ScaldingHot.SERVER.getPlayerList().reloadResources();
-                        }
-                    });
+                    .done();
             })
             .thenRunAsync(() -> {
                 for (var task : pendingTasks) {

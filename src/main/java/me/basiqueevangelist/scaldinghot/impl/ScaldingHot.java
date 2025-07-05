@@ -7,6 +7,7 @@ import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.ServerAdvancementManager;
+import net.minecraft.server.packs.PackType;
 import net.minecraft.world.item.crafting.RecipeManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,6 +23,8 @@ public class ScaldingHot implements ModInitializer {
 
 		ScaldingApi.enableAutomaticHotReloading(RecipeManager.class);
 		ScaldingApi.enableAutomaticHotReloading(ServerAdvancementManager.class);
+
+		ScaldingApi.addPlugin(PackType.SERVER_DATA, new ServerReloadPlugin());
 
 		ServerLifecycleEvents.SERVER_STARTING.register(server -> SERVER = server);
 		ServerLifecycleEvents.SERVER_STOPPED.register(server -> SERVER = null);
