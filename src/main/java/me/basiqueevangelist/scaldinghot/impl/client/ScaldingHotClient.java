@@ -12,6 +12,7 @@ import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.client.resources.language.LanguageManager;
 import net.minecraft.server.packs.PackType;
 import net.minecraft.server.packs.resources.ResourceManager;
+
 import java.util.concurrent.Executor;
 
 public class ScaldingHotClient implements ClientModInitializer {

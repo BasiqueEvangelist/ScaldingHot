@@ -1,9 +1,10 @@
 package me.basiqueevangelist.scaldinghot.api;
 
-import java.util.Collection;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.PackType;
 import net.minecraft.server.packs.resources.ResourceManager;
+
+import java.util.Collection;
 
 /**
  * A batch of modified resources.

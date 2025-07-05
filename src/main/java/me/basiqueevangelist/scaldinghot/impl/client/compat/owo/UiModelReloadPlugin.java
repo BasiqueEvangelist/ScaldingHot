@@ -24,7 +24,7 @@ public class UiModelReloadPlugin implements HotReloadPlugin {
 
                 access.scaldinghot$clearAdapter();
                 access.scaldinghot$setModel(UIModelLoader.get(modelId));
-                ((ScreenAccessor) client.screen).callClearAndInit();
+                ((ScreenAccessor) client.screen).callRebuildWidgets();
             }
         });
     }

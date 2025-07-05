@@ -15,7 +15,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import java.util.Collection;
 
 @Mixin(SpriteResourceLoader.class)
-public interface SpriteOpenerMixin {
+public interface SpriteResourceLoaderMixin {
     @Inject(method = "method_52851", at = @At(value = "RETURN"))
     private static void addOriginalId(Collection<MetadataSectionSerializer<?>> metadatas, ResourceLocation id, Resource resource, CallbackInfoReturnable<SpriteContents> cir) {
         var ret = cir.getReturnValue();

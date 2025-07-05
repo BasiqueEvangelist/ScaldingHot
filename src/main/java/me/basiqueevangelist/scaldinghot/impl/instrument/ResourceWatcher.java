@@ -1,9 +1,10 @@
 package me.basiqueevangelist.scaldinghot.impl.instrument;
 
+import me.basiqueevangelist.scaldinghot.api.ScaldingPackResources;
 import me.basiqueevangelist.scaldinghot.impl.ScaldingHot;
 import net.minecraft.server.packs.PackResources;
 import net.minecraft.server.packs.PackType;
-import me.basiqueevangelist.scaldinghot.api.ScaldingResourcePack;
+
 import java.io.IOException;
 import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
@@ -49,7 +50,7 @@ public class ResourceWatcher {
         registeredKeys.clear();
 
         for (var pack : packs) {
-            if (pack instanceof ScaldingResourcePack scalding) {
+            if (pack instanceof ScaldingPackResources scalding) {
                 for (var path : scalding.getRootPaths(this.type)) {
                     registerPath(path);
                 }

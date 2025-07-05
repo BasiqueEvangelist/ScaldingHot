@@ -4,13 +4,13 @@
     "compatibilityLevel": "JAVA_21",
     "plugin": "com.moulberry.mixinconstraints.ConstraintsMixinPlugin",
     "mixins": [
-        "DirectoryResourcePackMixin",
-        "LifecycledResourceManagerImplMixin",
+        "MultiPackResourceManagerMixin",
         "NamespaceResourceManagerMixin",
-        "ProfiledResourceReloadMixin",
-        "ReloadableResourceManagerImplMixin",
+        "PathPackResourcesMixin",
+        "ProfiledReloadInstanceMixin",
+        "ReloadableResourceManagerMixin",
         "ResourceMixin",
-        "SimpleResourceReloadMixin",
+        "SimpleReloadInstanceMixin",
         "fabric.ModNioResourcePackMixin"
     ],
     "injectors": {
@@ -18,10 +18,10 @@
     },
     "client": [
         "client.ScreenAccessor",
-        "client.SpriteAccessor",
-        "client.SpriteAtlasTextureAccessor",
         "client.SpriteContentsMixin",
-        "client.SpriteOpenerMixin",
+        "client.SpriteResourceLoaderMixin",
+        "client.TextureAtlasAccessor",
+        "client.TextureAtlasSpriteAccessor",
         "client.TextureManagerAccessor",
         "client.TextureManagerMixin",
         "client.owo.BaseUIModelHandledScreenMixin",

@@ -4,6 +4,7 @@ import net.fabricmc.fabric.api.resource.IdentifiableResourceReloadListener;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.PackType;
 import net.minecraft.server.packs.resources.PreparableReloadListener;
+
 import java.util.HashSet;
 import java.util.Set;
 import java.util.WeakHashMap;

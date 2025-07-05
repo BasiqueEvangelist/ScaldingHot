@@ -1,8 +1,8 @@
 package me.basiqueevangelist.scaldinghot.mixin.fabric;
 
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
+import me.basiqueevangelist.scaldinghot.api.ScaldingPackResources;
 import me.basiqueevangelist.scaldinghot.impl.ScaldingHot;
-import me.basiqueevangelist.scaldinghot.api.ScaldingResourcePack;
 import net.fabricmc.fabric.api.resource.ResourcePackActivationType;
 import net.fabricmc.fabric.impl.resource.loader.ModNioResourcePack;
 import net.fabricmc.loader.api.ModContainer;
@@ -21,7 +21,7 @@ import java.util.List;
 
 @SuppressWarnings("UnstableApiUsage")
 @Mixin(ModNioResourcePack.class)
-public abstract class ModNioResourcePackMixin implements ScaldingResourcePack {
+public abstract class ModNioResourcePackMixin implements ScaldingPackResources {
     @Shadow @Final private List<Path> basePaths;
 
     @ModifyExpressionValue(method = "create", at = @At(value = "INVOKE", target = "Lnet/fabricmc/loader/api/ModContainer;getRootPaths()Ljava/util/List;"))

@@ -1,6 +1,6 @@
 package me.basiqueevangelist.scaldinghot.mixin;
 
-import me.basiqueevangelist.scaldinghot.api.ScaldingResourcePack;
+import me.basiqueevangelist.scaldinghot.api.ScaldingPackResources;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.PackType;
 import net.minecraft.server.packs.PathPackResources;
@@ -13,7 +13,7 @@ import java.nio.file.Path;
 import java.util.List;
 
 @Mixin(PathPackResources.class)
-public class DirectoryResourcePackMixin implements ScaldingResourcePack {
+public class PathPackResourcesMixin implements ScaldingPackResources {
     @Shadow @Final private Path root;
 
     @Override

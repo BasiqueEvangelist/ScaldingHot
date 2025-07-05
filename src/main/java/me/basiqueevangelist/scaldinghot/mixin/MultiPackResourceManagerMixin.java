@@ -20,13 +20,14 @@ import java.util.Set;
 import java.util.function.Predicate;
 
 @Mixin(MultiPackResourceManager.class)
-public abstract class LifecycledResourceManagerImplMixin implements ResourceManagerAccess {
+public abstract class MultiPackResourceManagerMixin implements ResourceManagerAccess {
     @Shadow @Final private List<PackResources> packs;
 
-    @Shadow @Nullable protected abstract ResourceFilterSection parseResourceFilter(PackResources pack);
-
     @Mutable
-    @Shadow @Final private Map<String, FallbackResourceManager> subManagers;
+    @Shadow @Final private Map<String, FallbackResourceManager> namespacedManagers;
+
+    @Shadow @Nullable protected abstract ResourceFilterSection getPackFilterSection(PackResources packResources);
+
     @Unique private PackType scaldinghot$type;
 
     @Inject(method = "<init>", at = @At("TAIL"))
@@ -44,34 +45,36 @@ public abstract class LifecycledResourceManagerImplMixin implements ResourceMana
         PackType type = scaldinghot$type;
 
         // Copied from the constructor.
-        List<String> list = packs.stream().flatMap(pack -> pack.getNamespaces(type).stream()).distinct().toList();
+        List<String> list = packs.stream().flatMap(packResourcesx -> packResourcesx.getNamespaces(type).stream()).distinct().toList();
 
-        for (PackResources resourcePack : packs) {
-            ResourceFilterSection resourceFilter = this.parseResourceFilter(resourcePack);
-            Set<String> set = resourcePack.getNamespaces(type);
-            Predicate<ResourceLocation> predicate = resourceFilter != null ? id -> resourceFilter.isPathFiltered(id.getPath()) : null;
+        for (PackResources packResources : packs) {
+            ResourceFilterSection resourceFilterSection = this.getPackFilterSection(packResources);
+            Set<String> set = packResources.getNamespaces(type);
+            Predicate<ResourceLocation> predicate = resourceFilterSection != null
+                ? resourceLocation -> resourceFilterSection.isPathFiltered(resourceLocation.getPath())
+                : null;
 
             for (String string : list) {
                 boolean bl = set.contains(string);
-                boolean bl2 = resourceFilter != null && resourceFilter.isNamespaceFiltered(string);
+                boolean bl2 = resourceFilterSection != null && resourceFilterSection.isNamespaceFiltered(string);
                 if (bl || bl2) {
-                    FallbackResourceManager namespaceResourceManager = map.get(string);
-                    if (namespaceResourceManager == null) {
-                        namespaceResourceManager = new FallbackResourceManager(type, string);
-                        map.put(string, namespaceResourceManager);
+                    FallbackResourceManager fallbackResourceManager = (FallbackResourceManager)map.get(string);
+                    if (fallbackResourceManager == null) {
+                        fallbackResourceManager = new FallbackResourceManager(type, string);
+                        map.put(string, fallbackResourceManager);
                     }
 
                     if (bl && bl2) {
-                        namespaceResourceManager.push(resourcePack, predicate);
+                        fallbackResourceManager.push(packResources, predicate);
                     } else if (bl) {
-                        namespaceResourceManager.push(resourcePack);
+                        fallbackResourceManager.push(packResources);
                     } else {
-                        namespaceResourceManager.pushFilterOnly(resourcePack.packId(), predicate);
+                        fallbackResourceManager.pushFilterOnly(packResources.packId(), predicate);
                     }
                 }
             }
         }
 
-        this.subManagers = map;
+        this.namespacedManagers = map;
     }
 }

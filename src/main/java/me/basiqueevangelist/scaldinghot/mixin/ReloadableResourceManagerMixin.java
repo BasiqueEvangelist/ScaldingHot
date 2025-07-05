@@ -9,10 +9,10 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 
 @Mixin(ReloadableResourceManager.class)
-public class ReloadableResourceManagerImplMixin implements ResourceManagerAccess {
+public class ReloadableResourceManagerMixin implements ResourceManagerAccess {
     @Shadow @Final private PackType type;
 
-    @Shadow private CloseableResourceManager activeManager;
+    @Shadow private CloseableResourceManager resources;
 
     @Override
     public PackType scaldinghot$type() {
@@ -21,6 +21,6 @@ public class ReloadableResourceManagerImplMixin implements ResourceManagerAccess
 
     @Override
     public void scaldinghot$recreate() {
-        ((ResourceManagerAccess) activeManager).scaldinghot$recreate();
+        ((ResourceManagerAccess) resources).scaldinghot$recreate();
     }
 }

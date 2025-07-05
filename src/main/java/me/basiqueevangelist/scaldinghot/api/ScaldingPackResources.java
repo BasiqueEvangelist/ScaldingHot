@@ -1,17 +1,17 @@
 package me.basiqueevangelist.scaldinghot.api;
 
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.packs.PackResources;
+import net.minecraft.server.packs.PackType;
 import org.jetbrains.annotations.Nullable;
 
 import java.nio.file.Path;
 import java.util.List;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.packs.PackResources;
-import net.minecraft.server.packs.PackType;
 
 /**
- * An optional interface for {@link PackResources} implementation to add support for hot reloading.
+ * An optional interface for {@link PackResources} implementations to add support for hot reloading.
  */
-public interface ScaldingResourcePack {
+public interface ScaldingPackResources {
     /**
      * Lists the root paths for a given pack type.
      * @param type the pack type use

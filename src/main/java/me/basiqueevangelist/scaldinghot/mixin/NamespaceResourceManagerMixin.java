@@ -22,7 +22,7 @@ public class NamespaceResourceManagerMixin {
         ((ResourceAccess) cir.getReturnValue()).scaldinghot$setId(id);
     }
 
-    @Inject(method = "getAllResources", at = @At("RETURN"))
+    @Inject(method = "getResourceStack", at = @At("RETURN"))
     private void addId(ResourceLocation id, CallbackInfoReturnable<List<Resource>> cir) {
         cir.getReturnValue().forEach(x -> ((ResourceAccess) x).scaldinghot$setId(id));
     }

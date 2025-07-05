@@ -3,6 +3,7 @@ package me.basiqueevangelist.scaldinghot.impl;
 import me.basiqueevangelist.scaldinghot.api.HotReloadPlugin;
 import net.minecraft.server.packs.PackType;
 import net.minecraft.server.packs.resources.PreparableReloadListener;
+
 import java.util.*;
 
 public class ScaldingRegistry {

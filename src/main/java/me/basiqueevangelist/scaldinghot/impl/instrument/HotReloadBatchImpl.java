@@ -1,14 +1,13 @@
 package me.basiqueevangelist.scaldinghot.impl.instrument;
 
-import me.basiqueevangelist.scaldinghot.api.HotReloadPlugin;
-import me.basiqueevangelist.scaldinghot.impl.ScaldingHot;
-import me.basiqueevangelist.scaldinghot.api.ScaldingResourcePack;
 import me.basiqueevangelist.scaldinghot.api.HotReloadBatch;
+import me.basiqueevangelist.scaldinghot.api.HotReloadPlugin;
+import me.basiqueevangelist.scaldinghot.api.ScaldingPackResources;
+import me.basiqueevangelist.scaldinghot.impl.ScaldingHot;
 import me.basiqueevangelist.scaldinghot.impl.ScaldingRegistry;
 import me.basiqueevangelist.scaldinghot.impl.client.ScaldingHotClient;
 import me.basiqueevangelist.scaldinghot.impl.pond.ResourceManagerAccess;
 import net.minecraft.Util;
-import net.minecraft.resource.*;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.PackResources;
 import net.minecraft.server.packs.PackType;
@@ -20,7 +19,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.nio.file.Path;
 import java.util.*;
-import java.util.Map.Entry;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.concurrent.TimeUnit;
@@ -148,7 +146,7 @@ public class HotReloadBatchImpl implements HotReloadBatch {
 
     private @Nullable ResourceLocation tryConvert(Path path) {
         for (var pack : (Iterable<PackResources>) resourceManager().listPacks()::iterator) {
-            if (!(pack instanceof ScaldingResourcePack scalding)) continue;
+            if (!(pack instanceof ScaldingPackResources scalding)) continue;
 
             ResourceLocation id = scalding.pathToResourceId(this.type, path);
 

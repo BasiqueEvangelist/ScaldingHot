@@ -1,6 +1,5 @@
 package me.basiqueevangelist.scaldinghot.impl.client.compat.lavender;
 
-import io.wispforest.lavender.book.Book;
 import io.wispforest.lavender.book.BookContentLoader;
 import io.wispforest.lavender.book.BookLoader;
 import io.wispforest.lavender.client.LavenderBookScreen;
@@ -8,7 +7,6 @@ import me.basiqueevangelist.scaldinghot.api.HotReloadBatch;
 import me.basiqueevangelist.scaldinghot.api.HotReloadPlugin;
 import me.basiqueevangelist.scaldinghot.api.ScaldingApi;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.server.packs.PackType;
 
 public class LavenderCompatPlugin implements HotReloadPlugin {

@@ -3,13 +3,13 @@ package me.basiqueevangelist.scaldinghot.impl.instrument;
 import me.basiqueevangelist.scaldinghot.impl.ScaldingHot;
 import me.basiqueevangelist.scaldinghot.impl.ScaldingRegistry;
 import me.basiqueevangelist.scaldinghot.impl.pond.ResourceManagerAccess;
-import net.minecraft.resource.*;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.PackResources;
 import net.minecraft.server.packs.PackType;
 import net.minecraft.server.packs.resources.PreparableReloadListener;
 import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.server.packs.resources.ResourceManager;
+
 import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Stream;

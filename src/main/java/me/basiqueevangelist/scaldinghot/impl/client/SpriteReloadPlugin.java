@@ -1,21 +1,18 @@
 package me.basiqueevangelist.scaldinghot.impl.client;
 
+import me.basiqueevangelist.scaldinghot.api.HotReloadBatch;
 import me.basiqueevangelist.scaldinghot.api.HotReloadPlugin;
 import me.basiqueevangelist.scaldinghot.impl.ScaldingHot;
-import me.basiqueevangelist.scaldinghot.api.HotReloadBatch;
-import me.basiqueevangelist.scaldinghot.mixin.client.SpriteAccessor;
-import me.basiqueevangelist.scaldinghot.mixin.client.SpriteAtlasTextureAccessor;
+import me.basiqueevangelist.scaldinghot.impl.pond.SpriteContentsAccess;
+import me.basiqueevangelist.scaldinghot.mixin.client.TextureAtlasAccessor;
+import me.basiqueevangelist.scaldinghot.mixin.client.TextureAtlasSpriteAccessor;
 import me.basiqueevangelist.scaldinghot.mixin.client.TextureManagerAccessor;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.texture.SpriteContents;
 import net.minecraft.client.renderer.texture.SpriteLoader;
 import net.minecraft.client.renderer.texture.TextureAtlas;
-import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.client.renderer.texture.atlas.SpriteResourceLoader;
-import net.minecraft.resources.ResourceLocation;
-import me.basiqueevangelist.scaldinghot.impl.pond.SpriteContentsAccess;
+
 import java.io.IOException;
-import java.util.Map.Entry;
 
 public class SpriteReloadPlugin implements HotReloadPlugin {
     @Override
@@ -24,10 +21,10 @@ public class SpriteReloadPlugin implements HotReloadPlugin {
         var textures = client.getTextureManager();
         var opener = SpriteResourceLoader.create(SpriteLoader.DEFAULT_METADATA_SECTIONS);
 
-        for (var entry : ((TextureManagerAccessor) textures).getTextures().entrySet()) {
+        for (var entry : ((TextureManagerAccessor) textures).getByPath().entrySet()) {
             if (!(entry.getValue() instanceof TextureAtlas atlas)) continue;
 
-            for (var spriteEntry : ((SpriteAtlasTextureAccessor) atlas).getSprites().entrySet()) {
+            for (var spriteEntry : ((TextureAtlasAccessor) atlas).getTexturesByName().entrySet()) {
                 var contents = spriteEntry.getValue().contents();
                 var originalId = ((SpriteContentsAccess) contents).scaldinghot$originalId();
                 if (originalId == null) continue;
@@ -39,7 +36,7 @@ public class SpriteReloadPlugin implements HotReloadPlugin {
                     if (newSprite == null) continue;
                     if (newSprite.height() != contents.height() || newSprite.width() != contents.height()) continue;
 
-                    ((SpriteAccessor) spriteEntry.getValue()).setContents(newSprite);
+                    ((TextureAtlasSpriteAccessor) spriteEntry.getValue()).setContents(newSprite);
 
                     atlas.bind();
                     spriteEntry.getValue().uploadFirstFrame();
