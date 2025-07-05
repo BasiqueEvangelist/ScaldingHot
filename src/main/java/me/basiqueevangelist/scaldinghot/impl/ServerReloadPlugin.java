@@ -2,6 +2,7 @@ package me.basiqueevangelist.scaldinghot.impl;
 
 import me.basiqueevangelist.scaldinghot.api.HotReloadBatch;
 import me.basiqueevangelist.scaldinghot.api.HotReloadPlugin;
+import me.basiqueevangelist.scaldinghot.mixin.MinecraftServerAccessor;
 import me.basiqueevangelist.scaldinghot.mixin.PlayerListAccessor;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.minecraft.network.protocol.common.ClientboundUpdateTagsPacket;
@@ -17,6 +18,11 @@ public class ServerReloadPlugin implements HotReloadPlugin {
     public void onHotReload(HotReloadBatch batch) {
         batch.queueFinishTask(() -> {
             MinecraftServer server = ScaldingHot.SERVER;
+
+            if (wasFolderChanged("tags/", batch)) {
+                ((MinecraftServerAccessor) server).getResources().managers().updateRegistryTags();
+            }
+
             PlayerList playerList = server.getPlayerList();
 
             playerList.saveAll();
@@ -42,6 +48,10 @@ public class ServerReloadPlugin implements HotReloadPlugin {
                     serverPlayer.connection.send(clientboundUpdateRecipesPacket);
                     serverPlayer.getRecipeBook().sendInitialRecipeBook(serverPlayer);
                 }
+            }
+
+            if (wasFolderChanged("tags/function/", batch) || wasFolderChanged("function/", batch)) {
+                server.getFunctions().replaceLibrary(((MinecraftServerAccessor) server).getResources().managers().getFunctionLibrary());
             }
         });
     }
