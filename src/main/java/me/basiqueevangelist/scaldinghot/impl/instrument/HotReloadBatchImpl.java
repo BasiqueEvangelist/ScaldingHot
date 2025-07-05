@@ -58,21 +58,6 @@ public class HotReloadBatchImpl implements HotReloadBatch {
         return changed;
     }
 
-    @Override
-    public Set<ResourceLocation> addedResources() {
-        return addedResources;
-    }
-
-    @Override
-    public Set<ResourceLocation> modifiedResources() {
-        return modifiedResources;
-    }
-
-    @Override
-    public Set<ResourceLocation> removedResources() {
-        return removedResources;
-    }
-
     private Executor getExecutor() {
         return switch (this.type) {
             case CLIENT_RESOURCES -> ScaldingHotClient.getClientExecutor();

@@ -26,21 +26,6 @@ public interface HotReloadBatch {
     Collection<ResourceLocation> changedResources();
 
     /**
-     * @return all resource IDs added in this hot reload
-     */
-    Collection<ResourceLocation> addedResources();
-
-    /**
-     * @return all resource IDs modified in this hot reload
-     */
-    Collection<ResourceLocation> modifiedResources();
-
-    /**
-     * @return all resource IDs removed in this hot reload
-     */
-    Collection<ResourceLocation> removedResources();
-
-    /**
      * Queues a task to be run when this hot reload is about to finish.
      * @param task the task to queue.
      * @apiNote Tasks will not be run if the hot reload fails.
