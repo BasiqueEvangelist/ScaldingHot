@@ -19,7 +19,9 @@ public class ServerReloadPlugin implements HotReloadPlugin {
         batch.queueFinishTask(() -> {
             MinecraftServer server = ScaldingHot.SERVER;
 
-            if (wasFolderChanged("tags/", batch)) {
+            boolean tagsChanged = wasFolderChanged("tags/", batch);
+
+            if (tagsChanged) {
                 ((MinecraftServerAccessor) server).getResources().managers().updateRegistryTags();
             }
 
@@ -37,11 +39,12 @@ public class ServerReloadPlugin implements HotReloadPlugin {
                 ServerLifecycleEvents.SYNC_DATA_PACK_CONTENTS.invoker().onSyncDataPackContents(player, false);
             }
 
-            if (wasFolderChanged("tags/", batch)) {
-                playerList.broadcastAll(new ClientboundUpdateTagsPacket(TagNetworkSerialization.serializeTagsToNetwork(server.registries())));
-            }
+            boolean recipesChanged = wasFolderChanged("recipe/", batch);
 
-            if (wasFolderChanged("recipe/", batch)) {
+            // EMI requires both tags and recipes to be synced to reload, so we send both if one is reloaded.
+            if (tagsChanged || recipesChanged) {
+                playerList.broadcastAll(new ClientboundUpdateTagsPacket(TagNetworkSerialization.serializeTagsToNetwork(server.registries())));
+
                 ClientboundUpdateRecipesPacket clientboundUpdateRecipesPacket = new ClientboundUpdateRecipesPacket(server.getRecipeManager().getOrderedRecipes());
 
                 for (ServerPlayer serverPlayer : playerList.getPlayers()) {
