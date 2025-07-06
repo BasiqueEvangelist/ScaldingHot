@@ -5,15 +5,38 @@ import me.basiqueevangelist.scaldinghot.api.HotReloadPlugin;
 import me.basiqueevangelist.scaldinghot.mixin.MinecraftServerAccessor;
 import me.basiqueevangelist.scaldinghot.mixin.PlayerListAccessor;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
+import net.fabricmc.fabric.impl.resource.conditions.ResourceConditionsImpl;
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.network.protocol.common.ClientboundUpdateTagsPacket;
 import net.minecraft.network.protocol.game.ClientboundUpdateRecipesPacket;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.PlayerAdvancements;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.players.PlayerList;
+import net.minecraft.tags.TagKey;
 import net.minecraft.tags.TagNetworkSerialization;
 
+import java.util.IdentityHashMap;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
+
 public class ServerReloadPlugin implements HotReloadPlugin {
+    public static void beforeHotReload() {
+        MinecraftServer server = ScaldingHot.SERVER;
+
+        Map<ResourceKey<?>, Set<ResourceLocation>> tagMap = new IdentityHashMap<>();
+
+        for (RegistryAccess.RegistryEntry<?> registry : server.registryAccess().registries().toList()) {
+            tagMap.put(registry.key(), registry.value().getTagNames().map(TagKey::location).collect(Collectors.toSet()));
+        }
+
+        //noinspection UnstableApiUsage
+        ResourceConditionsImpl.LOADED_TAGS.set(tagMap);
+    }
+
     @Override
     public void onHotReload(HotReloadBatch batch) {
         batch.queueFinishTask(() -> {
@@ -24,6 +47,9 @@ public class ServerReloadPlugin implements HotReloadPlugin {
             if (tagsChanged) {
                 ((MinecraftServerAccessor) server).getResources().managers().updateRegistryTags();
             }
+
+            //noinspection UnstableApiUsage
+            ResourceConditionsImpl.LOADED_TAGS.remove();
 
             PlayerList playerList = server.getPlayerList();
 

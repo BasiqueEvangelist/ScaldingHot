@@ -1,4 +1,14 @@
 {
+    "fabric:load_conditions": [
+        {
+            "condition": "fabric:tags_populated",
+            "registry": "minecraft:item",
+            "values": [
+                "c:storage_blocks/raw_tin",
+                "c:storage_blocks/tin"
+            ]
+        }
+    ],
     "parent": "minecraft:story/upgrade_tools",
     "criteria": {
         "myfacewhen": {

@@ -5,6 +5,7 @@ import me.basiqueevangelist.scaldinghot.api.HotReloadPlugin;
 import me.basiqueevangelist.scaldinghot.api.ScaldingPackResources;
 import me.basiqueevangelist.scaldinghot.impl.ScaldingHot;
 import me.basiqueevangelist.scaldinghot.impl.ScaldingRegistry;
+import me.basiqueevangelist.scaldinghot.impl.ServerReloadPlugin;
 import me.basiqueevangelist.scaldinghot.impl.client.ScaldingHotClient;
 import me.basiqueevangelist.scaldinghot.impl.pond.ResourceManagerAccess;
 import net.minecraft.Util;
@@ -172,6 +173,10 @@ public class HotReloadBatchImpl implements HotReloadBatch {
 
                 if (resourceManager() instanceof ResourceManagerAccess access) {
                     access.scaldinghot$recreate();
+                }
+
+                if (type == PackType.SERVER_DATA) {
+                    ServerReloadPlugin.beforeHotReload();
                 }
 
                 RuntimeException reloadFailed = new RuntimeException("Hot reload plugins failed to reload");
