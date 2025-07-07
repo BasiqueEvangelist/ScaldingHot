@@ -20,7 +20,9 @@ import java.util.concurrent.Executor;
 public class ScaldingHotClient implements ClientModInitializer {
     @Override
     public void onInitializeClient() {
-        ClientCommandRegistrationCallback.EVENT.register(AddPathCommand::register);
+        if (FabricLoader.getInstance().isDevelopmentEnvironment())
+            ClientCommandRegistrationCallback.EVENT.register(AddPathCommand::register);
+
         ClientCommandRegistrationCallback.EVENT.register(ReloadConfigCommand::register);
 
         ResourceWatcher.CLIENT_RESOURCES.init();
