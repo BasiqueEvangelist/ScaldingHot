@@ -33,9 +33,9 @@ public class ConfigManager {
             } catch (Exception e) {
                 LOGGER.error("Could not load config file!", e);
             }
-        } else {
-            save();
         }
+
+        save();
     }
 
     public void save() {
