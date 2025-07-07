@@ -124,8 +124,9 @@ public class HotReloadBatchImpl implements HotReloadBatch {
         if (!settleSent) {
             settleSent = true;
 
+            // TODO: make this a proper debounce
             new CompletableFuture<Void>()
-                .completeOnTimeout(null, 500, TimeUnit.MILLISECONDS)
+                .completeOnTimeout(null, ScaldingHot.CONFIG.get().reloadDebounceMillis, TimeUnit.MILLISECONDS)
                 .thenRunAsync(this::settle, getExecutor());
         }
     }
