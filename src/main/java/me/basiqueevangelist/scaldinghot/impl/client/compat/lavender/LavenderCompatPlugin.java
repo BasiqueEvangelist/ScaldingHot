@@ -16,6 +16,8 @@ public class LavenderCompatPlugin implements HotReloadPlugin {
 
     @Override
     public void onHotReload(HotReloadBatch batch) {
+        if (Minecraft.getInstance().level == null) return;
+
         BookLoader.reload(batch.resourceManager());
         BookContentLoader.reloadContents(batch.resourceManager());
 

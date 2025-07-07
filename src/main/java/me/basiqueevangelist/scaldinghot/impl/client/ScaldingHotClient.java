@@ -8,6 +8,7 @@ import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.font.FontManager;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.client.resources.language.LanguageManager;
 import net.minecraft.client.sounds.SoundManager;
@@ -27,6 +28,7 @@ public class ScaldingHotClient implements ClientModInitializer {
         ScaldingApi.enableAutomaticHotReloading(LanguageManager.class);
         ScaldingApi.enableAutomaticHotReloading(TextureManager.class);
         ScaldingApi.enableAutomaticHotReloading(SoundManager.class);
+        ScaldingApi.enableAutomaticHotReloading(FontManager.class);
 
         ScaldingApi.addPlugin(PackType.CLIENT_RESOURCES, new SpriteReloadPlugin());
 
