@@ -26,6 +26,8 @@ public class ConfigManager {
     }
 
     public void load() {
+        config = new ScaldingHotConfig();
+
         Path confPath = FabricLoader.getInstance().getConfigDir().resolve("scaldinghot.json");
         if (Files.exists(confPath)) {
             try (var reader = Files.newBufferedReader(confPath)) {
