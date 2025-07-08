@@ -7,4 +7,6 @@ public interface SpriteContentsAccess {
     @Nullable ResourceLocation scaldinghot$originalId();
 
     void scaldinghot$setOriginalId(ResourceLocation originalId);
+
+    int scaldinghot$getMipLevel();
 }

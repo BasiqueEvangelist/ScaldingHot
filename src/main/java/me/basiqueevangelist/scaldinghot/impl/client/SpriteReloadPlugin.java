@@ -36,6 +36,8 @@ public class SpriteReloadPlugin implements HotReloadPlugin {
                     if (newSprite == null) continue;
                     if (newSprite.height() != contents.height() || newSprite.width() != contents.height()) continue;
 
+                    newSprite.increaseMipLevel(((SpriteContentsAccess) contents).scaldinghot$getMipLevel());
+
                     ((TextureAtlasSpriteAccessor) spriteEntry.getValue()).setContents(newSprite);
 
                     atlas.bind();
