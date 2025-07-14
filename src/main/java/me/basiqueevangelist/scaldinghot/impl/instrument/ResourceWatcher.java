@@ -107,7 +107,7 @@ public class ResourceWatcher {
                     } else if (event.kind() == StandardWatchEventKinds.ENTRY_MODIFY) {
                         HotReloadBatchImpl.get(this.type).fileModified(filePath);
                     } else if (event.kind() == StandardWatchEventKinds.ENTRY_DELETE) {
-                        if (Files.isDirectory(filePath))
+                        if (registeredKeys.containsKey(filePath))
                             registeredKeys.remove(filePath).cancel();
                         else {
                             existingPaths.remove(filePath);
