@@ -26,6 +26,6 @@ public class SpriteContentsMixin implements SpriteContentsAccess {
 
     @Override
     public int scaldinghot$getMipLevel() {
-        return byMipLevel.length;
+        return byMipLevel.length - 1;
     }
 }

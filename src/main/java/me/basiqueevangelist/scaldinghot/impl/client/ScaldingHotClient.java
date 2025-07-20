@@ -33,6 +33,7 @@ public class ScaldingHotClient implements ClientModInitializer {
         ScaldingApi.enableAutomaticHotReloading(FontManager.class);
 
         ScaldingApi.addPlugin(PackType.CLIENT_RESOURCES, new SpriteReloadPlugin());
+        ScaldingApi.addPlugin(PackType.CLIENT_RESOURCES, new ModelReloadPlugin());
 
         if (FabricLoader.getInstance().isModLoaded("owo"))
             OwoCompat.init();

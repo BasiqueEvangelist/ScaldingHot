@@ -3,18 +3,23 @@ package me.basiqueevangelist.scaldinghot.impl.instrument;
 import me.basiqueevangelist.scaldinghot.api.HotReloadBatch;
 import me.basiqueevangelist.scaldinghot.api.HotReloadPlugin;
 import me.basiqueevangelist.scaldinghot.api.ScaldingPackResources;
+import me.basiqueevangelist.scaldinghot.impl.CursedThreadLocals;
 import me.basiqueevangelist.scaldinghot.impl.ScaldingHot;
 import me.basiqueevangelist.scaldinghot.impl.ScaldingRegistry;
 import me.basiqueevangelist.scaldinghot.impl.ServerReloadPlugin;
 import me.basiqueevangelist.scaldinghot.impl.client.ScaldingHotClient;
+import me.basiqueevangelist.scaldinghot.impl.pond.ReloadableServerResourcesAccess;
 import me.basiqueevangelist.scaldinghot.impl.pond.ResourceManagerAccess;
+import me.basiqueevangelist.scaldinghot.mixin.MinecraftServerAccessor;
 import net.minecraft.Util;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.ReloadableServerRegistries;
 import net.minecraft.server.packs.PackResources;
 import net.minecraft.server.packs.PackType;
 import net.minecraft.server.packs.resources.PreparableReloadListener;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.resources.SimpleReloadInstance;
+import net.minecraft.tags.TagManager;
 import net.minecraft.util.Unit;
 import org.jetbrains.annotations.Nullable;
 
@@ -37,6 +42,8 @@ public class HotReloadBatchImpl implements HotReloadBatch {
     private final Set<ResourceLocation> removedResources = new HashSet<>();
 
     private final List<Runnable> pendingTasks = new ArrayList<>();
+
+    private final Set<Class<? extends PreparableReloadListener>> reloadersToReload = new HashSet<>();
 
     private HotReloadBatchImpl(PackType type) {
         this.type = type;
@@ -77,6 +84,11 @@ public class HotReloadBatchImpl implements HotReloadBatch {
     @Override
     public PackType type() {
         return this.type;
+    }
+
+    @Override
+    public void markNeedsReload(Class<? extends PreparableReloadListener> reloader) {
+        reloadersToReload.add(reloader);
     }
 
     @Override
@@ -148,38 +160,64 @@ public class HotReloadBatchImpl implements HotReloadBatch {
     }
 
     private void settle() {
+        Set<ResourceLocation> changedIds = new HashSet<>();
+
+        changedIds.addAll(addedResources);
+        changedIds.addAll(modifiedResources);
+        changedIds.addAll(removedResources);
+
+        StringBuilder sb = new StringBuilder();
+
+        for (var id : addedResources) {
+            sb.append("\n+ ").append(id);
+        }
+
+        for (var id : modifiedResources) {
+            sb.append("\n~ ").append(id);
+        }
+
+        for (var id : removedResources) {
+            sb.append("\n- ").append(id);
+        }
+
+        ScaldingHot.LOGGER.info("commiting changes: {}", sb);
+
+        if (resourceManager() instanceof ResourceManagerAccess access) {
+            access.scaldinghot$recreate();
+        }
+
+        if (type == PackType.SERVER_DATA) {
+            ServerReloadPlugin.beforeHotReload();
+        }
+
         CompletableFuture.completedFuture(null)
             .thenCompose(ignored -> {
-                Set<ResourceLocation> changedIds = new HashSet<>();
+                boolean needRegistryReload = false;
 
-                changedIds.addAll(addedResources);
-                changedIds.addAll(modifiedResources);
-                changedIds.addAll(removedResources);
-
-                StringBuilder sb = new StringBuilder();
-
-                for (var id : addedResources) {
-                    sb.append("\n+ ").append(id);
+                for (var id : changedIds) {
+                    if (ReloaderData.RELOADABLE_REGISTRIES.isRelevant(id)) {
+                        needRegistryReload = true;
+                        break;
+                    }
                 }
 
-                for (var id : modifiedResources) {
-                    sb.append("\n~ ").append(id);
-                }
+                if (!needRegistryReload) return CompletableFuture.completedFuture(null);
 
-                for (var id : removedResources) {
-                    sb.append("\n- ").append(id);
-                }
+                return ReloadableServerRegistries.reload(
+                    ScaldingHot.SERVER.registries(),
+                    resourceManager(),
+                    Util.backgroundExecutor()
+                )
+                    .thenApply(x -> {
+                        var registryAccess = x.compositeAccess();
+                        ((ReloadableServerResourcesAccess) ((MinecraftServerAccessor) ScaldingHot.SERVER).getResources().managers()).scaldinghot$insertRegistries(registryAccess);
 
-                ScaldingHot.LOGGER.info("commiting changes: {}", sb);
+                        markNeedsReload(TagManager.class);
 
-                if (resourceManager() instanceof ResourceManagerAccess access) {
-                    access.scaldinghot$recreate();
-                }
-
-                if (type == PackType.SERVER_DATA) {
-                    ServerReloadPlugin.beforeHotReload();
-                }
-
+                        return null;
+                    });
+            })
+            .thenCompose(unused -> {
                 RuntimeException reloadFailed = new RuntimeException("Hot reload plugins failed to reload");
                 boolean fail = false;
 
@@ -195,10 +233,13 @@ public class HotReloadBatchImpl implements HotReloadBatch {
                 }
 
                 outer:
-                for (var data : ReloaderData.RELOADER_TO_DATA.entrySet()) {
-                    if (data.getValue().type != this.type) continue;
+                for (var reloader : ReloaderShed.getFor(this.type)) {
+                    if (reloadersToReload.contains(reloader.getClass())) {
+                        neededReloaders.add(reloader);
+                        continue;
+                    }
 
-                    if (data.getKey() instanceof HotReloadPlugin scalding) {
+                    if (reloader instanceof HotReloadPlugin scalding) {
                         try {
                             scalding.onHotReload(HotReloadBatchImpl.this);
                         } catch (Exception e) {
@@ -207,9 +248,13 @@ public class HotReloadBatchImpl implements HotReloadBatch {
                         }
                     }
 
+                    var data = ReloaderData.RELOADER_TO_DATA.get(reloader);
+
+                    if (data == null) continue;
+
                     for (var id : changedIds) {
-                        if (data.getValue().isRelevant(id)) {
-                            neededReloaders.add(data.getKey());
+                        if (data.isRelevant(id)) {
+                            neededReloaders.add(reloader);
                             continue outer;
                         }
                     }
@@ -229,14 +274,19 @@ public class HotReloadBatchImpl implements HotReloadBatch {
 
                 automaticReloaders.removeIf(x -> x instanceof HotReloadPlugin);
 
-                return SimpleReloadInstance.of(
-                        resourceManager(),
-                        automaticReloaders,
-                        Util.backgroundExecutor(),
-                        getExecutor(),
-                        CompletableFuture.completedFuture(Unit.INSTANCE)
-                    )
-                    .done();
+                CursedThreadLocals.IN_HOT_RELOAD.set(true);
+                try {
+                    return SimpleReloadInstance.of(
+                            resourceManager(),
+                            automaticReloaders,
+                            Util.backgroundExecutor(),
+                            getExecutor(),
+                            CompletableFuture.completedFuture(Unit.INSTANCE)
+                        )
+                        .done();
+                } finally {
+                    CursedThreadLocals.IN_HOT_RELOAD.remove();
+                }
             })
             .thenRunAsync(() -> {
                 for (var task : pendingTasks) {
@@ -259,6 +309,7 @@ public class HotReloadBatchImpl implements HotReloadBatch {
                 modifiedResources.clear();
                 removedResources.clear();
                 pendingTasks.clear();
+                reloadersToReload.clear();
             });
     }
 }

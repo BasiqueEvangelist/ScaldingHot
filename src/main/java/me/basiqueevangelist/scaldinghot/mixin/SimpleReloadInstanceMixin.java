@@ -1,7 +1,9 @@
 package me.basiqueevangelist.scaldinghot.mixin;
 
 import com.llamalad7.mixinextras.sugar.Local;
+import me.basiqueevangelist.scaldinghot.impl.CursedThreadLocals;
 import me.basiqueevangelist.scaldinghot.impl.instrument.InstrumentingResourceManager;
+import me.basiqueevangelist.scaldinghot.impl.instrument.ReloaderShed;
 import me.basiqueevangelist.scaldinghot.impl.instrument.ResourceWatcher;
 import me.basiqueevangelist.scaldinghot.impl.pond.ResourceManagerAccess;
 import net.minecraft.server.packs.resources.PreparableReloadListener;
@@ -28,8 +30,12 @@ public class SimpleReloadInstanceMixin {
 
     @Inject(method = "create", at = @At("HEAD"))
     private static void clearWatches(ResourceManager manager, List<PreparableReloadListener> reloaders, Executor prepareExecutor, Executor applyExecutor, CompletableFuture<Unit> initialStage, boolean profiled, CallbackInfoReturnable<ReloadInstance> cir) {
+        if (CursedThreadLocals.IN_HOT_RELOAD.get()) return;
+
         if (manager instanceof ResourceManagerAccess access) {
             ResourceWatcher.get(access.scaldinghot$type()).start(manager.listPacks().toList());
+
+            ReloaderShed.stowReloaders(access.scaldinghot$type(), reloaders);
         }
     }
 }

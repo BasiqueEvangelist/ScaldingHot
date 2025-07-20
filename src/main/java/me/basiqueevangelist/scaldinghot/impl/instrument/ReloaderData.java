@@ -6,6 +6,7 @@ import net.minecraft.server.packs.PackType;
 import net.minecraft.server.packs.resources.PreparableReloadListener;
 
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.WeakHashMap;
 
@@ -14,14 +15,18 @@ public class ReloaderData {
 
     public static final WeakHashMap<PreparableReloadListener, ReloaderData> RELOADER_TO_DATA = new WeakHashMap<>();
 
+    public static final ReloaderData RELOADABLE_REGISTRIES = new ReloaderData(null, PackType.SERVER_DATA);
+
     public final String reloaderName;
     public final PackType type;
-    public final Set<ResourceLocation> accessedResources = new HashSet<>();
+    public final Set<ResourceLocation> accessedResources = new LinkedHashSet<>();
 
     public ReloaderData(PreparableReloadListener reloader, PackType type) {
         this.type = type;
         if (reloader instanceof IdentifiableResourceReloadListener identifiable) {
             reloaderName = identifiable.getFabricId().toString();
+        } else if (reloader == null) {
+            reloaderName = "Reloadable Registries";
         } else {
             reloaderName = reloader.getName();
         }
