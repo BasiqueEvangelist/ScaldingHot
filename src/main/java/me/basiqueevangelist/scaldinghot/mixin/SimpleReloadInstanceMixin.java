@@ -23,9 +23,15 @@ import java.util.concurrent.Executor;
 
 @Mixin(SimpleReloadInstance.class)
 public class SimpleReloadInstanceMixin {
-    @ModifyArg(method = "prepareTasks", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/packs/resources/SimpleReloadInstance$StateFactory;create(Lnet/minecraft/server/packs/resources/PreparableReloadListener$PreparationBarrier;Lnet/minecraft/server/packs/resources/ResourceManager;Lnet/minecraft/server/packs/resources/PreparableReloadListener;Ljava/util/concurrent/Executor;Ljava/util/concurrent/Executor;)Ljava/util/concurrent/CompletableFuture;"))
-    private ResourceManager instrument(ResourceManager manager, @Local PreparableReloadListener reloader) {
-        return InstrumentingResourceManager.wrap(manager, reloader);
+    @ModifyArg(method = "prepareTasks", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/packs/resources/SimpleReloadInstance$StateFactory;create(Lnet/minecraft/server/packs/resources/PreparableReloadListener$SharedState;Lnet/minecraft/server/packs/resources/PreparableReloadListener$PreparationBarrier;Lnet/minecraft/server/packs/resources/PreparableReloadListener;Ljava/util/concurrent/Executor;Ljava/util/concurrent/Executor;)Ljava/util/concurrent/CompletableFuture;"))
+    private PreparableReloadListener.SharedState instrument(PreparableReloadListener.SharedState state, @Local PreparableReloadListener reloader) {
+        ResourceManager newManager = InstrumentingResourceManager.wrap(state.resourceManager(), reloader);
+
+        if (state.resourceManager() == newManager) return state;
+
+        PreparableReloadListener.SharedState newState = new PreparableReloadListener.SharedState(newManager);
+        ((PreparableReloadListenerSharedStateAccessor)(Object) newState).setState(((PreparableReloadListenerSharedStateAccessor)(Object) state).getState());
+        return newState;
     }
 
     @Inject(method = "create", at = @At("HEAD"))

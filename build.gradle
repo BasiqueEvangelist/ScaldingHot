@@ -54,7 +54,8 @@ dependencies {
 	minecraft "com.mojang:minecraft:${project.minecraft_version}"
 	mappings loom.layered {
 		officialMojangMappings()
-		parchment("org.parchmentmc.data:parchment-${project.minecraft_version}:${parchment_version}@zip")
+		// TODO: readd once 1.21.9 releases
+//		parchment("org.parchmentmc.data:parchment-${project.minecraft_version}:${parchment_version}@zip")
 	}
 	modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
 
@@ -70,7 +71,7 @@ dependencies {
 //	modLocalRuntime "io.wispforest:lavender:${project.lavender_version}"
 
 	modCompileOnly "io.wispforest:owo-lib:${project.owo_version}"
-	modLocalRuntime "io.wispforest:owo-lib:${project.owo_version}"
+//	modLocalRuntime "io.wispforest:owo-lib:${project.owo_version}"
 }
 
 processResources {

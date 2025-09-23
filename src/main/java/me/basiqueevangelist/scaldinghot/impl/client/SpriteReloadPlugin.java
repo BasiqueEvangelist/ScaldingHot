@@ -13,13 +13,14 @@ import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.client.renderer.texture.atlas.SpriteResourceLoader;
 
 import java.io.IOException;
+import java.util.Set;
 
 public class SpriteReloadPlugin implements HotReloadPlugin {
     @Override
     public void onHotReload(HotReloadBatch batch) {
         var client = Minecraft.getInstance();
         var textures = client.getTextureManager();
-        var opener = SpriteResourceLoader.create(SpriteLoader.DEFAULT_METADATA_SECTIONS);
+        var opener = SpriteResourceLoader.create(Set.of() /* TODO: figure out what to put here */);
 
         for (var entry : ((TextureManagerAccessor) textures).getByPath().entrySet()) {
             if (!(entry.getValue() instanceof TextureAtlas atlas)) continue;

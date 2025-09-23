@@ -9,6 +9,7 @@
         "NamespaceResourceManagerMixin",
         "PathPackResourcesMixin",
         "PlayerListAccessor",
+        "PreparableReloadListenerSharedStateAccessor",
         "ReloadableResourceManagerMixin",
         "ReloadableServerResourcesMixin",
         "ResourceMixin",
