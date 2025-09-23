@@ -22,6 +22,7 @@ public class ReloadableServerResourcesMixin implements ReloadableServerResources
     @Mutable
     @Shadow @Final private ReloadableServerRegistries.Holder fullRegistryHolder;
 
+    @Mutable
     @Shadow @Final private List<Registry.PendingTags<?>> postponedTags;
 
     @ModifyArg(method = "loadResources", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/ReloadableServerRegistries;reload(Lnet/minecraft/core/LayeredRegistryAccess;Ljava/util/List;Lnet/minecraft/server/packs/resources/ResourceManager;Ljava/util/concurrent/Executor;)Ljava/util/concurrent/CompletableFuture;"))
@@ -32,6 +33,11 @@ public class ReloadableServerResourcesMixin implements ReloadableServerResources
     @Override
     public void scaldinghot$insertRegistries(RegistryAccess.Frozen newRegistries) {
         this.fullRegistryHolder = new ReloadableServerRegistries.Holder(newRegistries);
+    }
+
+    @Override
+    public void scaldinghot$insertPostponedTags(List<Registry.PendingTags<?>> newTags) {
+        this.postponedTags = newTags;
     }
 
     public List<Registry.PendingTags<?>> scaldinghot$getPostponedTags() {

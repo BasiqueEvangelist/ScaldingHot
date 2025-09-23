@@ -8,5 +8,7 @@ import java.util.List;
 public interface ReloadableServerResourcesAccess {
     void scaldinghot$insertRegistries(RegistryAccess.Frozen newRegistries);
 
+    void scaldinghot$insertPostponedTags(List<Registry.PendingTags<?>> newTags);
+
     List<Registry.PendingTags<?>> scaldinghot$getPostponedTags();
 }

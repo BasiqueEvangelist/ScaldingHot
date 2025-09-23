@@ -12,13 +12,16 @@ import me.basiqueevangelist.scaldinghot.impl.pond.ReloadableServerResourcesAcces
 import me.basiqueevangelist.scaldinghot.impl.pond.ResourceManagerAccess;
 import me.basiqueevangelist.scaldinghot.mixin.MinecraftServerAccessor;
 import net.minecraft.Util;
+import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.ReloadableServerRegistries;
+import net.minecraft.server.ReloadableServerResources;
 import net.minecraft.server.packs.PackResources;
 import net.minecraft.server.packs.PackType;
 import net.minecraft.server.packs.resources.PreparableReloadListener;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.resources.SimpleReloadInstance;
+import net.minecraft.tags.TagLoader;
 import net.minecraft.util.Unit;
 import org.jetbrains.annotations.Nullable;
 
@@ -194,6 +197,11 @@ public class HotReloadBatchImpl implements HotReloadBatch {
                 boolean needRegistryReload = false;
 
                 for (var id : changedIds) {
+                    if (id.getPath().startsWith("tags/")) {
+                        needRegistryReload = true;
+                        break;
+                    }
+
                     if (ReloaderData.RELOADABLE_REGISTRIES.isRelevant(id)) {
                         needRegistryReload = true;
                         break;
@@ -202,15 +210,20 @@ public class HotReloadBatchImpl implements HotReloadBatch {
 
                 if (!needRegistryReload) return CompletableFuture.completedFuture(null);
 
+                List<Registry.PendingTags<?>> pendingTags = TagLoader.loadTagsForExistingRegistries(resourceManager(), ScaldingHot.SERVER.registries().compositeAccess());
+
                 return ReloadableServerRegistries.reload(
                     ScaldingHot.SERVER.registries(),
-                    ((ReloadableServerResourcesAccess) ((MinecraftServerAccessor) ScaldingHot.SERVER).getResources().managers()).scaldinghot$getPostponedTags(),
+                    pendingTags,
                     resourceManager(),
                     Util.backgroundExecutor()
                 )
                     .thenApply(x -> {
                         var registryAccess = x.layers().compositeAccess();
-                        ((ReloadableServerResourcesAccess) ((MinecraftServerAccessor) ScaldingHot.SERVER).getResources().managers()).scaldinghot$insertRegistries(registryAccess);
+                        ReloadableServerResources resources = ((MinecraftServerAccessor) ScaldingHot.SERVER).getResources().managers();
+
+                        ((ReloadableServerResourcesAccess) resources).scaldinghot$insertRegistries(registryAccess);
+                        ((ReloadableServerResourcesAccess) resources).scaldinghot$insertPostponedTags(pendingTags);
 
                         return null;
                     });
