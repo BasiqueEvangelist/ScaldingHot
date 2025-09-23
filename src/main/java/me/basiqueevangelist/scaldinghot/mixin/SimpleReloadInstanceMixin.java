@@ -23,8 +23,8 @@ import java.util.concurrent.Executor;
 
 @Mixin(SimpleReloadInstance.class)
 public class SimpleReloadInstanceMixin {
-    @ModifyArg(method = "method_18368", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/packs/resources/PreparableReloadListener;reload(Lnet/minecraft/server/packs/resources/PreparableReloadListener$PreparationBarrier;Lnet/minecraft/server/packs/resources/ResourceManager;Lnet/minecraft/util/profiling/ProfilerFiller;Lnet/minecraft/util/profiling/ProfilerFiller;Ljava/util/concurrent/Executor;Ljava/util/concurrent/Executor;)Ljava/util/concurrent/CompletableFuture;"))
-    private static ResourceManager instrument(ResourceManager manager, @Local(argsOnly = true) PreparableReloadListener reloader) {
+    @ModifyArg(method = "prepareTasks", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/packs/resources/SimpleReloadInstance$StateFactory;create(Lnet/minecraft/server/packs/resources/PreparableReloadListener$PreparationBarrier;Lnet/minecraft/server/packs/resources/ResourceManager;Lnet/minecraft/server/packs/resources/PreparableReloadListener;Ljava/util/concurrent/Executor;Ljava/util/concurrent/Executor;)Ljava/util/concurrent/CompletableFuture;"))
+    private ResourceManager instrument(ResourceManager manager, @Local PreparableReloadListener reloader) {
         return InstrumentingResourceManager.wrap(manager, reloader);
     }
 

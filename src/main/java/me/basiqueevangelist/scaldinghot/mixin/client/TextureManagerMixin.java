@@ -4,6 +4,7 @@ import me.basiqueevangelist.scaldinghot.api.HotReloadBatch;
 import me.basiqueevangelist.scaldinghot.api.HotReloadPlugin;
 import me.basiqueevangelist.scaldinghot.impl.ScaldingHot;
 import net.minecraft.client.renderer.texture.AbstractTexture;
+import net.minecraft.client.renderer.texture.ReloadableTexture;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.resources.ResourceLocation;
 import org.spongepowered.asm.mixin.Final;
@@ -23,10 +24,12 @@ public class TextureManagerMixin implements HotReloadPlugin {
             AbstractTexture texture = byPath.get(id);
             if (texture == null) continue;
 
-            try {
-                texture.load(batch.resourceManager());
-            } catch (IOException e) {
-                ScaldingHot.LOGGER.error("Couldn't hot reload texture {}", id, e);
+            if (texture instanceof ReloadableTexture reloadable) {
+                try {
+                    reloadable.loadContents(batch.resourceManager());
+                } catch (IOException e) {
+                    ScaldingHot.LOGGER.error("Couldn't hot reload texture {}", id, e);
+                }
             }
         }
     }

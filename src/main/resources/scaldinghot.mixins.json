@@ -4,18 +4,15 @@
     "compatibilityLevel": "JAVA_21",
     "plugin": "com.moulberry.mixinconstraints.ConstraintsMixinPlugin",
     "mixins": [
-        "ConfigurableRegistryLookupAccessor",
         "MinecraftServerAccessor",
         "MultiPackResourceManagerMixin",
         "NamespaceResourceManagerMixin",
         "PathPackResourcesMixin",
         "PlayerListAccessor",
-        "ProfiledReloadInstanceMixin",
         "ReloadableResourceManagerMixin",
         "ReloadableServerResourcesMixin",
         "ResourceMixin",
         "SimpleReloadInstanceMixin",
-        "TagManagerAccessor",
         "fabric.ModNioResourcePackMixin"
     ],
     "injectors": {

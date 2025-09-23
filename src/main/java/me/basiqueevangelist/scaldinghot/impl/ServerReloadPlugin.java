@@ -25,16 +25,7 @@ import java.util.stream.Collectors;
 
 public class ServerReloadPlugin implements HotReloadPlugin {
     public static void beforeHotReload() {
-        MinecraftServer server = ScaldingHot.SERVER;
-
-        Map<ResourceKey<?>, Set<ResourceLocation>> tagMap = new IdentityHashMap<>();
-
-        for (RegistryAccess.RegistryEntry<?> registry : server.registryAccess().registries().toList()) {
-            tagMap.put(registry.key(), registry.value().getTagNames().map(TagKey::location).collect(Collectors.toSet()));
-        }
-
-        //noinspection UnstableApiUsage
-        ResourceConditionsImpl.LOADED_TAGS.set(tagMap);
+        // Used to handle LOADED_TAGS.
     }
 
     @Override
@@ -45,11 +36,8 @@ public class ServerReloadPlugin implements HotReloadPlugin {
             boolean tagsChanged = wasFolderChanged("tags/", batch);
 
             if (tagsChanged) {
-                ((MinecraftServerAccessor) server).getResources().managers().updateRegistryTags();
+                ((MinecraftServerAccessor) server).getResources().managers().updateStaticRegistryTags();
             }
-
-            //noinspection UnstableApiUsage
-            ResourceConditionsImpl.LOADED_TAGS.remove();
 
             PlayerList playerList = server.getPlayerList();
 
@@ -71,7 +59,10 @@ public class ServerReloadPlugin implements HotReloadPlugin {
             if (tagsChanged || recipesChanged) {
                 playerList.broadcastAll(new ClientboundUpdateTagsPacket(TagNetworkSerialization.serializeTagsToNetwork(server.registries())));
 
-                ClientboundUpdateRecipesPacket clientboundUpdateRecipesPacket = new ClientboundUpdateRecipesPacket(server.getRecipeManager().getOrderedRecipes());
+                ClientboundUpdateRecipesPacket clientboundUpdateRecipesPacket = new ClientboundUpdateRecipesPacket(
+                    server.getRecipeManager().getSynchronizedItemProperties(),
+                    server.getRecipeManager().getSynchronizedStonecutterRecipes()
+                );
 
                 for (ServerPlayer serverPlayer : playerList.getPlayers()) {
                     serverPlayer.connection.send(clientboundUpdateRecipesPacket);

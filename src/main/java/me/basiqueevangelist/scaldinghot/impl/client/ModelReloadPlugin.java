@@ -12,7 +12,7 @@ public class ModelReloadPlugin implements HotReloadPlugin {
         if (!wasFolderChanged("models/", batch) && !wasFolderChanged("textures/item/", batch)) return;
 
         batch.markNeedsReload(ModelManager.class);
-        batch.markNeedsReload(ItemRenderer.class);
+//        batch.markNeedsReload(ItemRenderer.class);
 
         batch.queueFinishTask(() -> {
             Minecraft.getInstance().levelRenderer.allChanged();

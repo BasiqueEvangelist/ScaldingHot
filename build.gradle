@@ -1,5 +1,5 @@
 plugins {
-	id 'fabric-loom' version '1.7-SNAPSHOT'
+	id 'fabric-loom' version '1.11-SNAPSHOT'
 	id 'maven-publish'
 }
 
@@ -67,7 +67,7 @@ dependencies {
 
 	// Optional dependencies
 	modCompileOnly "io.wispforest:lavender:${project.lavender_version}"
-	modLocalRuntime "io.wispforest:lavender:${project.lavender_version}"
+//	modLocalRuntime "io.wispforest:lavender:${project.lavender_version}"
 
 	modCompileOnly "io.wispforest:owo-lib:${project.owo_version}"
 	modLocalRuntime "io.wispforest:owo-lib:${project.owo_version}"

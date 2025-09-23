@@ -19,7 +19,6 @@ import net.minecraft.server.packs.PackType;
 import net.minecraft.server.packs.resources.PreparableReloadListener;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.resources.SimpleReloadInstance;
-import net.minecraft.tags.TagManager;
 import net.minecraft.util.Unit;
 import org.jetbrains.annotations.Nullable;
 
@@ -205,14 +204,13 @@ public class HotReloadBatchImpl implements HotReloadBatch {
 
                 return ReloadableServerRegistries.reload(
                     ScaldingHot.SERVER.registries(),
+                    ((ReloadableServerResourcesAccess) ((MinecraftServerAccessor) ScaldingHot.SERVER).getResources().managers()).scaldinghot$getPostponedTags(),
                     resourceManager(),
                     Util.backgroundExecutor()
                 )
                     .thenApply(x -> {
-                        var registryAccess = x.compositeAccess();
+                        var registryAccess = x.layers().compositeAccess();
                         ((ReloadableServerResourcesAccess) ((MinecraftServerAccessor) ScaldingHot.SERVER).getResources().managers()).scaldinghot$insertRegistries(registryAccess);
-
-                        markNeedsReload(TagManager.class);
 
                         return null;
                     });

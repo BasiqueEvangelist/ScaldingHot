@@ -40,8 +40,7 @@ public class SpriteReloadPlugin implements HotReloadPlugin {
 
                     ((TextureAtlasSpriteAccessor) spriteEntry.getValue()).setContents(newSprite);
 
-                    atlas.bind();
-                    spriteEntry.getValue().uploadFirstFrame();
+                    spriteEntry.getValue().uploadFirstFrame(atlas.getTexture());
                 } catch (RuntimeException | IOException e) {
                     ScaldingHot.LOGGER.error("Couldn't hot reload sprite {} of {}", spriteEntry.getKey(), atlas.location(), e);
                 }
