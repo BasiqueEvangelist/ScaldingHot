@@ -1,7 +1,7 @@
 package me.basiqueevangelist.scaldinghot.mixin;
 
 import me.basiqueevangelist.scaldinghot.impl.pond.ResourceAccess;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.packs.resources.Resource;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
@@ -9,15 +9,15 @@ import org.spongepowered.asm.mixin.Unique;
 
 @Mixin(Resource.class)
 public class ResourceMixin implements ResourceAccess {
-    @Unique private ResourceLocation scaldinghot$id = null;
+    @Unique private Identifier scaldinghot$id = null;
 
     @Override
-    public @Nullable ResourceLocation scaldinghot$id() {
+    public @Nullable Identifier scaldinghot$id() {
         return scaldinghot$id;
     }
 
     @Override
-    public void scaldinghot$setId(ResourceLocation id) {
+    public void scaldinghot$setId(Identifier id) {
         scaldinghot$id = id;
     }
 }

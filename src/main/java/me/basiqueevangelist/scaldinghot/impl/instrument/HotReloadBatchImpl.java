@@ -11,9 +11,8 @@ import me.basiqueevangelist.scaldinghot.impl.client.ScaldingHotClient;
 import me.basiqueevangelist.scaldinghot.impl.pond.ReloadableServerResourcesAccess;
 import me.basiqueevangelist.scaldinghot.impl.pond.ResourceManagerAccess;
 import me.basiqueevangelist.scaldinghot.mixin.MinecraftServerAccessor;
-import net.minecraft.Util;
 import net.minecraft.core.Registry;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.ReloadableServerRegistries;
 import net.minecraft.server.ReloadableServerResources;
 import net.minecraft.server.packs.PackResources;
@@ -23,6 +22,7 @@ import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.resources.SimpleReloadInstance;
 import net.minecraft.tags.TagLoader;
 import net.minecraft.util.Unit;
+import net.minecraft.util.Util;
 import org.jetbrains.annotations.Nullable;
 
 import java.nio.file.Path;
@@ -39,9 +39,9 @@ public class HotReloadBatchImpl implements HotReloadBatch {
     private final PackType type;
     private boolean settleSent = false;
 
-    private final Set<ResourceLocation> addedResources = new HashSet<>();
-    private final Set<ResourceLocation> modifiedResources = new HashSet<>();
-    private final Set<ResourceLocation> removedResources = new HashSet<>();
+    private final Set<Identifier> addedResources = new HashSet<>();
+    private final Set<Identifier> modifiedResources = new HashSet<>();
+    private final Set<Identifier> removedResources = new HashSet<>();
 
     private final List<Runnable> pendingTasks = new ArrayList<>();
 
@@ -59,9 +59,9 @@ public class HotReloadBatchImpl implements HotReloadBatch {
     }
 
     @Override
-    public Collection<ResourceLocation> changedResources() {
+    public Collection<Identifier> changedResources() {
         // TODO: make this good.
-        Set<ResourceLocation> changed = new HashSet<>();
+        Set<Identifier> changed = new HashSet<>();
         changed.addAll(addedResources);
         changed.addAll(modifiedResources);
         changed.addAll(removedResources);
@@ -99,7 +99,7 @@ public class HotReloadBatchImpl implements HotReloadBatch {
     }
 
     public void fileAdded(Path path) {
-        ResourceLocation id = tryConvert(path);
+        Identifier id = tryConvert(path);
         if (id == null) return;
 
         removedResources.remove(id);
@@ -109,7 +109,7 @@ public class HotReloadBatchImpl implements HotReloadBatch {
     }
 
     public void fileModified(Path path) {
-        ResourceLocation id = tryConvert(path);
+        Identifier id = tryConvert(path);
         if (id == null) return;
 
         if (addedResources.contains(id)) return;
@@ -120,7 +120,7 @@ public class HotReloadBatchImpl implements HotReloadBatch {
     }
 
     public void fileRemoved(Path path) {
-        ResourceLocation id = tryConvert(path);
+        Identifier id = tryConvert(path);
         if (id == null) return;
 
         if (addedResources.contains(id)) {
@@ -145,11 +145,11 @@ public class HotReloadBatchImpl implements HotReloadBatch {
         }
     }
 
-    private @Nullable ResourceLocation tryConvert(Path path) {
+    private @Nullable Identifier tryConvert(Path path) {
         for (var pack : (Iterable<PackResources>) resourceManager().listPacks()::iterator) {
             if (!(pack instanceof ScaldingPackResources scalding)) continue;
 
-            ResourceLocation id = scalding.pathToResourceId(this.type, path);
+            Identifier id = scalding.pathToResourceId(this.type, path);
 
             if (id == null) continue;
 
@@ -162,7 +162,7 @@ public class HotReloadBatchImpl implements HotReloadBatch {
     }
 
     private void settle() {
-        Set<ResourceLocation> changedIds = new HashSet<>();
+        Set<Identifier> changedIds = new HashSet<>();
 
         changedIds.addAll(addedResources);
         changedIds.addAll(modifiedResources);

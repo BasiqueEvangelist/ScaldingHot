@@ -1,7 +1,7 @@
 package me.basiqueevangelist.scaldinghot.mixin;
 
 import me.basiqueevangelist.scaldinghot.impl.pond.ResourceAccess;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.packs.PackResources;
 import net.minecraft.server.packs.resources.FallbackResourceManager;
 import net.minecraft.server.packs.resources.IoSupplier;
@@ -18,12 +18,12 @@ import java.util.List;
 @Mixin(FallbackResourceManager.class)
 public class NamespaceResourceManagerMixin {
     @Inject(method = "createResource", at = @At("RETURN"))
-    private static void addId(PackResources pack, ResourceLocation id, IoSupplier<InputStream> supplier, IoSupplier<ResourceMetadata> metadataSupplier, CallbackInfoReturnable<Resource> cir) {
+    private static void addId(PackResources pack, Identifier id, IoSupplier<InputStream> supplier, IoSupplier<ResourceMetadata> metadataSupplier, CallbackInfoReturnable<Resource> cir) {
         ((ResourceAccess) cir.getReturnValue()).scaldinghot$setId(id);
     }
 
     @Inject(method = "getResourceStack", at = @At("RETURN"))
-    private void addId(ResourceLocation id, CallbackInfoReturnable<List<Resource>> cir) {
+    private void addId(Identifier id, CallbackInfoReturnable<List<Resource>> cir) {
         cir.getReturnValue().forEach(x -> ((ResourceAccess) x).scaldinghot$setId(id));
     }
 }

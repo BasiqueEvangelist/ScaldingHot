@@ -6,7 +6,7 @@ import io.wispforest.owo.ui.base.BaseUIModelScreen;
 import io.wispforest.owo.ui.core.ParentComponent;
 import io.wispforest.owo.ui.parsing.UIModel;
 import me.basiqueevangelist.scaldinghot.impl.pond.OwoModelScreenAccess;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -18,7 +18,7 @@ import org.spongepowered.asm.mixin.Shadow;
 public abstract class BaseUIModelScreenMixin<R extends ParentComponent> extends BaseOwoScreen<R> implements OwoModelScreenAccess {
     @Shadow
     @Final
-    @Nullable protected ResourceLocation modelId;
+    @Nullable protected Identifier modelId;
 
     @Mutable
     @Shadow @Final protected UIModel model;
@@ -30,7 +30,7 @@ public abstract class BaseUIModelScreenMixin<R extends ParentComponent> extends 
     }
 
     @Override
-    public @Nullable ResourceLocation scaldinghot$modelId() {
+    public @Nullable Identifier scaldinghot$modelId() {
         return this.modelId;
     }
 

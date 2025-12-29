@@ -7,7 +7,7 @@ import io.wispforest.owo.ui.core.ParentComponent;
 import io.wispforest.owo.ui.parsing.UIModel;
 import me.basiqueevangelist.scaldinghot.impl.pond.OwoModelScreenAccess;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import org.jetbrains.annotations.Nullable;
@@ -19,7 +19,7 @@ import org.spongepowered.asm.mixin.Shadow;
 @IfModLoaded("owo")
 @Mixin(BaseUIModelHandledScreen.class)
 public abstract class BaseUIModelHandledScreenMixin<R extends ParentComponent, S extends AbstractContainerMenu> extends BaseOwoHandledScreen<R, S> implements OwoModelScreenAccess {
-    @Shadow @Final @Nullable protected ResourceLocation modelId;
+    @Shadow @Final @Nullable protected Identifier modelId;
 
     @Mutable
     @Shadow @Final protected UIModel model;
@@ -35,7 +35,7 @@ public abstract class BaseUIModelHandledScreenMixin<R extends ParentComponent, S
     }
 
     @Override
-    public @Nullable ResourceLocation scaldinghot$modelId() {
+    public @Nullable Identifier scaldinghot$modelId() {
         return this.modelId;
     }
 

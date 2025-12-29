@@ -1,6 +1,6 @@
 package me.basiqueevangelist.scaldinghot.api;
 
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.packs.PackResources;
 import net.minecraft.server.packs.PackType;
 import org.jetbrains.annotations.Nullable;
@@ -25,5 +25,5 @@ public interface ScaldingPackResources {
      * @param path the path to convert
      * @return the corresponding resource identifier, or {@code null} if there is none
      */
-    @Nullable ResourceLocation pathToResourceId(PackType type, Path path);
+    @Nullable Identifier pathToResourceId(PackType type, Path path);
 }

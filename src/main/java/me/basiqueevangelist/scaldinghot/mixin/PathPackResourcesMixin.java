@@ -1,7 +1,7 @@
 package me.basiqueevangelist.scaldinghot.mixin;
 
 import me.basiqueevangelist.scaldinghot.api.ScaldingPackResources;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.packs.PackType;
 import net.minecraft.server.packs.PathPackResources;
 import org.jetbrains.annotations.Nullable;
@@ -22,7 +22,7 @@ public class PathPackResourcesMixin implements ScaldingPackResources {
     }
 
     @Override
-    public @Nullable ResourceLocation pathToResourceId(PackType type, Path path) {
+    public @Nullable Identifier pathToResourceId(PackType type, Path path) {
         String separator = this.root.getFileSystem().getSeparator();
         Path typePath = this.root.resolve(type.getDirectory());
 
@@ -33,6 +33,6 @@ public class PathPackResourcesMixin implements ScaldingPackResources {
         Path nsPath = typePath.resolve(namespace);
 
         String filename = nsPath.relativize(path).toString().replace(separator, "/");
-        return ResourceLocation.tryBuild(namespace, filename);
+        return Identifier.tryBuild(namespace, filename);
     }
 }

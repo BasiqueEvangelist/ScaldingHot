@@ -4,9 +4,10 @@ import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import me.basiqueevangelist.scaldinghot.api.ScaldingPackResources;
 import me.basiqueevangelist.scaldinghot.impl.ScaldingHot;
 import net.fabricmc.fabric.api.resource.ResourcePackActivationType;
-import net.fabricmc.fabric.impl.resource.loader.ModNioResourcePack;
+import net.fabricmc.fabric.api.resource.v1.pack.PackActivationType;
+import net.fabricmc.fabric.impl.resource.pack.ModNioPackResources;
 import net.fabricmc.loader.api.ModContainer;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.packs.PackType;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Final;
@@ -20,12 +21,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 @SuppressWarnings("UnstableApiUsage")
-@Mixin(ModNioResourcePack.class)
-public abstract class ModNioResourcePackMixin implements ScaldingPackResources {
+@Mixin(ModNioPackResources.class)
+public abstract class ModNioPackResourcesMixin implements ScaldingPackResources {
     @Shadow @Final private List<Path> basePaths;
 
     @ModifyExpressionValue(method = "create", at = @At(value = "INVOKE", target = "Lnet/fabricmc/loader/api/ModContainer;getRootPaths()Ljava/util/List;"))
-    private static List<Path> injectPaths(List<Path> original, String id, ModContainer mod, String subPath, PackType type, ResourcePackActivationType activationType, boolean modBundled) {
+    private static List<Path> injectPaths(List<Path> original, String id, ModContainer mod, String subPath, PackType type, PackActivationType activationType, boolean modBundled) {
         String modid = mod.getMetadata().getId();
         List<String> additionalPaths = ScaldingHot.CONFIG.get().modResourcePaths.get(modid);
 
@@ -54,7 +55,7 @@ public abstract class ModNioResourcePackMixin implements ScaldingPackResources {
     }
 
     @Override
-    public @Nullable ResourceLocation pathToResourceId(PackType type, Path path) {
+    public @Nullable Identifier pathToResourceId(PackType type, Path path) {
         for (Path basePath : this.basePaths) {
             String separator = basePath.getFileSystem().getSeparator();
 
@@ -67,7 +68,7 @@ public abstract class ModNioResourcePackMixin implements ScaldingPackResources {
             Path nsPath = typePath.resolve(namespace);
 
             String filename = nsPath.relativize(path).toString().replace(separator, "/");
-            return ResourceLocation.tryBuild(namespace, filename);
+            return Identifier.tryBuild(namespace, filename);
         }
 
         return null;

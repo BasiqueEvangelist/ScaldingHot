@@ -1,6 +1,6 @@
 package me.basiqueevangelist.scaldinghot.api;
 
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.packs.PackType;
 import net.minecraft.server.packs.resources.PreparableReloadListener;
 import net.minecraft.server.packs.resources.ResourceManager;
@@ -24,7 +24,7 @@ public interface HotReloadBatch {
     /**
      * @return all resource IDs added, modified or removed in this hot reload
      */
-    Collection<ResourceLocation> changedResources();
+    Collection<Identifier> changedResources();
 
     /**
      * Marks a reloader as needing to be reloaded during this hot reload.

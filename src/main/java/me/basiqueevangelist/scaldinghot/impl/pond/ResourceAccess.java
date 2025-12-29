@@ -1,10 +1,10 @@
 package me.basiqueevangelist.scaldinghot.impl.pond;
 
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import org.jetbrains.annotations.Nullable;
 
 public interface ResourceAccess {
-    @Nullable ResourceLocation scaldinghot$id();
+    @Nullable Identifier scaldinghot$id();
 
-    void scaldinghot$setId(ResourceLocation id);
+    void scaldinghot$setId(Identifier id);
 }

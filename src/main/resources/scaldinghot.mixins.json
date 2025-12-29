@@ -14,7 +14,7 @@
         "ReloadableServerResourcesMixin",
         "ResourceMixin",
         "SimpleReloadInstanceMixin",
-        "fabric.ModNioResourcePackMixin"
+        "fabric.ModNioPackResourcesMixin"
     ],
     "injectors": {
         "defaultRequire": 1

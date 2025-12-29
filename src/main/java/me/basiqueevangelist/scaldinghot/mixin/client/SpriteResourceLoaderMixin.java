@@ -4,7 +4,7 @@ import me.basiqueevangelist.scaldinghot.impl.pond.ResourceAccess;
 import me.basiqueevangelist.scaldinghot.impl.pond.SpriteContentsAccess;
 import net.minecraft.client.renderer.texture.SpriteContents;
 import net.minecraft.client.renderer.texture.atlas.SpriteResourceLoader;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.packs.metadata.MetadataSectionType;
 import net.minecraft.server.packs.resources.Resource;
 import org.spongepowered.asm.mixin.Mixin;
@@ -17,7 +17,7 @@ import java.util.Set;
 @Mixin(SpriteResourceLoader.class)
 public interface SpriteResourceLoaderMixin {
     @Inject(method = "method_52851", at = @At(value = "RETURN"))
-    private static void addOriginalId(Set<MetadataSectionType<?>> metadatas, ResourceLocation id, Resource resource, CallbackInfoReturnable<SpriteContents> cir) {
+    private static void addOriginalId(Set<MetadataSectionType<?>> metadatas, Identifier id, Resource resource, CallbackInfoReturnable<SpriteContents> cir) {
         var ret = cir.getReturnValue();
         if (ret == null) return;
 

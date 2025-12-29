@@ -1,7 +1,7 @@
 package me.basiqueevangelist.scaldinghot.mixin;
 
 import me.basiqueevangelist.scaldinghot.impl.pond.ResourceManagerAccess;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.packs.PackResources;
 import net.minecraft.server.packs.PackType;
 import net.minecraft.server.packs.resources.FallbackResourceManager;
@@ -50,7 +50,7 @@ public abstract class MultiPackResourceManagerMixin implements ResourceManagerAc
         for (PackResources packResources : packs) {
             ResourceFilterSection resourceFilterSection = this.getPackFilterSection(packResources);
             Set<String> set = packResources.getNamespaces(type);
-            Predicate<ResourceLocation> predicate = resourceFilterSection != null
+            Predicate<Identifier> predicate = resourceFilterSection != null
                 ? resourceLocation -> resourceFilterSection.isPathFiltered(resourceLocation.getPath())
                 : null;
 

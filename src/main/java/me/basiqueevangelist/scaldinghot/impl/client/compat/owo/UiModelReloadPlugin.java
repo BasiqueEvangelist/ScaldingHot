@@ -6,7 +6,7 @@ import me.basiqueevangelist.scaldinghot.api.HotReloadPlugin;
 import me.basiqueevangelist.scaldinghot.impl.pond.OwoModelScreenAccess;
 import me.basiqueevangelist.scaldinghot.mixin.client.ScreenAccessor;
 import net.minecraft.client.Minecraft;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 public class UiModelReloadPlugin implements HotReloadPlugin {
     @Override
@@ -15,10 +15,10 @@ public class UiModelReloadPlugin implements HotReloadPlugin {
             var client = Minecraft.getInstance();
 
             if (client.screen instanceof OwoModelScreenAccess access) {
-                ResourceLocation modelId = access.scaldinghot$modelId();
+                Identifier modelId = access.scaldinghot$modelId();
                 if (modelId == null) return;
 
-                ResourceLocation resourceId = ResourceLocation.fromNamespaceAndPath(modelId.getNamespace(), "owo_ui/" + modelId.getPath() + ".xml");
+                Identifier resourceId = Identifier.fromNamespaceAndPath(modelId.getNamespace(), "owo_ui/" + modelId.getPath() + ".xml");
 
                 if (!batch.changedResources().contains(resourceId)) return;
 

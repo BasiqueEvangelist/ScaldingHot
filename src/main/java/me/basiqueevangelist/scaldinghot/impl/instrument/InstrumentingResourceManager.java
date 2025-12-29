@@ -3,7 +3,7 @@ package me.basiqueevangelist.scaldinghot.impl.instrument;
 import me.basiqueevangelist.scaldinghot.impl.ScaldingHot;
 import me.basiqueevangelist.scaldinghot.impl.ScaldingRegistry;
 import me.basiqueevangelist.scaldinghot.impl.pond.ResourceManagerAccess;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.packs.PackResources;
 import net.minecraft.server.packs.PackType;
 import net.minecraft.server.packs.resources.PreparableReloadListener;
@@ -39,26 +39,26 @@ public class InstrumentingResourceManager implements ResourceManager {
     }
 
     @Override
-    public List<Resource> getResourceStack(ResourceLocation id) {
+    public List<Resource> getResourceStack(Identifier id) {
         List<Resource> resources = delegate.getResourceStack(id);
         markPath(id);
         return resources;
     }
 
     @Override
-    public Map<ResourceLocation, Resource> listResources(String startingPath, Predicate<ResourceLocation> allowedPathPredicate) {
+    public Map<Identifier, Resource> listResources(String startingPath, Predicate<Identifier> allowedPathPredicate) {
         markAllFrom(startingPath);
 
-        Map<ResourceLocation, Resource> res = delegate.listResources(startingPath, allowedPathPredicate);
+        Map<Identifier, Resource> res = delegate.listResources(startingPath, allowedPathPredicate);
         markAllPaths(res.keySet());
         return res;
     }
 
     @Override
-    public Map<ResourceLocation, List<Resource>> listResourceStacks(String startingPath, Predicate<ResourceLocation> allowedPathPredicate) {
+    public Map<Identifier, List<Resource>> listResourceStacks(String startingPath, Predicate<Identifier> allowedPathPredicate) {
         markAllFrom(startingPath);
 
-        Map<ResourceLocation, List<Resource>> res = delegate.listResourceStacks(startingPath, allowedPathPredicate);
+        Map<Identifier, List<Resource>> res = delegate.listResourceStacks(startingPath, allowedPathPredicate);
         markAllPaths(res.keySet());
         return res;
     }
@@ -69,7 +69,7 @@ public class InstrumentingResourceManager implements ResourceManager {
     }
 
     @Override
-    public Optional<Resource> getResource(ResourceLocation id) {
+    public Optional<Resource> getResource(Identifier id) {
         markPath(id);
 
         return delegate.getResource(id);
@@ -82,7 +82,7 @@ public class InstrumentingResourceManager implements ResourceManager {
             return ReloaderData.getForReloader(reloader, type);
     }
 
-    private void markAllPaths(Collection<ResourceLocation> ids) {
+    private void markAllPaths(Collection<Identifier> ids) {
         ReloaderData data = getReloaderData();
 
         for (var id : ids) {
@@ -90,7 +90,7 @@ public class InstrumentingResourceManager implements ResourceManager {
         }
     }
 
-    private void markPath(ResourceLocation id) {
+    private void markPath(Identifier id) {
         ReloaderData data = getReloaderData();
 
         data.markAccessed(id);
@@ -101,7 +101,7 @@ public class InstrumentingResourceManager implements ResourceManager {
 
         for (var pack : (Iterable<PackResources>) delegate.listPacks()::iterator) {
             for (var namespace : pack.getNamespaces(this.type)) {
-                data.markAccessed(ResourceLocation.fromNamespaceAndPath(namespace, startingPath));
+                data.markAccessed(Identifier.fromNamespaceAndPath(namespace, startingPath));
             }
         }
     }

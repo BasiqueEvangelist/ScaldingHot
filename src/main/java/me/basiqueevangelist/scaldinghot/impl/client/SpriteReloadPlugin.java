@@ -37,11 +37,14 @@ public class SpriteReloadPlugin implements HotReloadPlugin {
                     if (newSprite == null) continue;
                     if (newSprite.height() != contents.height() || newSprite.width() != contents.height()) continue;
 
-                    newSprite.increaseMipLevel(((SpriteContentsAccess) contents).scaldinghot$getMipLevel());
+                    int mipLevel = ((SpriteContentsAccess) contents).scaldinghot$getMipLevel();
+                    newSprite.increaseMipLevel(mipLevel);
 
                     ((TextureAtlasSpriteAccessor) spriteEntry.getValue()).setContents(newSprite);
 
-                    spriteEntry.getValue().uploadFirstFrame(atlas.getTexture());
+                    for (int l = 0; l <= mipLevel; l++) {
+                        spriteEntry.getValue().uploadFirstFrame(atlas.getTexture(), l);
+                    }
                 } catch (RuntimeException | IOException e) {
                     ScaldingHot.LOGGER.error("Couldn't hot reload sprite {} of {}", spriteEntry.getKey(), atlas.location(), e);
                 }
