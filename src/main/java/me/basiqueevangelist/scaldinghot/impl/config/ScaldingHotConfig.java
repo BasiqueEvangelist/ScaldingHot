@@ -8,4 +8,6 @@ public class ScaldingHotConfig {
     public Map<String, List<String>> modResourcePaths = new HashMap<>();
 
     public int reloadDebounceMillis = 100;
+
+    public boolean reloadModelsOnItemTextureChange = true;
 }
