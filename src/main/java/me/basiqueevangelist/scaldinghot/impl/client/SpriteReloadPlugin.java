@@ -25,6 +25,8 @@ public class SpriteReloadPlugin implements HotReloadPlugin {
         for (var entry : ((TextureManagerAccessor) textures).getByPath().entrySet()) {
             if (!(entry.getValue() instanceof TextureAtlas atlas)) continue;
 
+            boolean hadUpdate = false;
+
             for (var spriteEntry : ((TextureAtlasAccessor) atlas).getTexturesByName().entrySet()) {
                 var contents = spriteEntry.getValue().contents();
                 var originalId = ((SpriteContentsAccess) contents).scaldinghot$originalId();
@@ -42,13 +44,14 @@ public class SpriteReloadPlugin implements HotReloadPlugin {
 
                     ((TextureAtlasSpriteAccessor) spriteEntry.getValue()).setContents(newSprite);
 
-                    for (int l = 0; l <= mipLevel; l++) {
-                        spriteEntry.getValue().uploadFirstFrame(atlas.getTexture(), l);
-                    }
+                    hadUpdate = true;
                 } catch (RuntimeException | IOException e) {
                     ScaldingHot.LOGGER.error("Couldn't hot reload sprite {} of {}", spriteEntry.getKey(), atlas.location(), e);
                 }
             }
+
+            if (hadUpdate)
+                ((TextureAtlasAccessor) atlas).callUploadInitialContents();
         }
     }
 }
