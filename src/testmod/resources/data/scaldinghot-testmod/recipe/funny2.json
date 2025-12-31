@@ -2,12 +2,8 @@
     "type": "minecraft:crafting_shaped",
     "category": "building",
     "key": {
-        "#": {
-            "item": "minecraft:copper_ingot"
-        },
-        "E": {
-            "item": "minecraft:ender_eye"
-        }
+        "#": "minecraft:copper_ingot",
+        "E": "minecraft:ender_eye"
     },
     "pattern": [
         "###",

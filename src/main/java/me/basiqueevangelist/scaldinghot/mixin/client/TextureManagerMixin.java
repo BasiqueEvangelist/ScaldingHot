@@ -26,7 +26,7 @@ public class TextureManagerMixin implements HotReloadPlugin {
 
             if (texture instanceof ReloadableTexture reloadable) {
                 try {
-                    reloadable.loadContents(batch.resourceManager());
+                    reloadable.apply(reloadable.loadContents(batch.resourceManager()));
                 } catch (IOException e) {
                     ScaldingHot.LOGGER.error("Couldn't hot reload texture {}", id, e);
                 }

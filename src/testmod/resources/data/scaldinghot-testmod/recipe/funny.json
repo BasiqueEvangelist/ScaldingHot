@@ -2,12 +2,8 @@
     "type": "minecraft:crafting_shaped",
     "category": "building",
     "key": {
-        "#": {
-            "item": "minecraft:diamond"
-        },
-        "E": {
-            "item": "minecraft:ender_eye"
-        }
+        "#": "minecraft:diamond",
+        "E": "minecraft:ender_eye"
     },
     "pattern": [
         "###",
