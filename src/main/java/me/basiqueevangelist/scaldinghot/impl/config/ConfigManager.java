@@ -2,6 +2,7 @@ package me.basiqueevangelist.scaldinghot.impl.config;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.Strictness;
 import net.fabricmc.loader.api.FabricLoader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,7 +13,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 
 public class ConfigManager {
-    private static final Gson GSON = new GsonBuilder().setPrettyPrinting().setLenient().create();
+    private static final Gson GSON = new GsonBuilder().setPrettyPrinting().setStrictness(Strictness.LENIENT).create();
     private static final Logger LOGGER = LoggerFactory.getLogger("Scalding Hot!/ConfigManager");
 
     private ScaldingHotConfig config = new ScaldingHotConfig();

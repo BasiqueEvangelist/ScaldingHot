@@ -3,7 +3,6 @@ package me.basiqueevangelist.scaldinghot.mixin.fabric;
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import me.basiqueevangelist.scaldinghot.api.ScaldingPackResources;
 import me.basiqueevangelist.scaldinghot.impl.ScaldingHot;
-import net.fabricmc.fabric.api.resource.ResourcePackActivationType;
 import net.fabricmc.fabric.api.resource.v1.pack.PackActivationType;
 import net.fabricmc.fabric.impl.resource.pack.ModNioPackResources;
 import net.fabricmc.loader.api.ModContainer;

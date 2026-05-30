@@ -17,7 +17,7 @@ public class ScaldingRegistry {
     }
 
     public static void addPlugin(PackType type, HotReloadPlugin plugin) {
-        PLUGINS.computeIfAbsent(type, unused -> new ArrayList<>()).add(plugin);
+        PLUGINS.computeIfAbsent(type, _ -> new ArrayList<>()).add(plugin);
     }
 
     public static boolean isHotReloadable(PreparableReloadListener reloader) {

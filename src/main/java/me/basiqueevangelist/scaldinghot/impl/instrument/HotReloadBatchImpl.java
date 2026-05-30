@@ -228,7 +228,7 @@ public class HotReloadBatchImpl implements HotReloadBatch {
                         return null;
                     });
             })
-            .thenCompose(unused -> {
+            .thenCompose(_ -> {
                 RuntimeException reloadFailed = new RuntimeException("Hot reload plugins failed to reload");
                 boolean fail = false;
 
@@ -313,7 +313,7 @@ public class HotReloadBatchImpl implements HotReloadBatch {
 
                 return null;
             })
-            .whenComplete((i1, i2) -> {
+            .whenComplete((_, _) -> {
                 settleSent = false;
 
                 addedResources.clear();
