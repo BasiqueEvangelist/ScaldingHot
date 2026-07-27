@@ -16,9 +16,7 @@ public class ModelReloadPlugin implements HotReloadPlugin {
         batch.markNeedsReload(AtlasManager.class); // TODO: don't remake atlases unless it's absolutely necessary
         batch.markNeedsReload(ModelManager.class);
 
-        batch.queueFinishTask(() -> {
-            Minecraft.getInstance().levelRenderer.allChanged();
-        });
+        batch.queueFinishTask(() -> Minecraft.getInstance().levelRenderer.notifyAll());
     }
 
     private boolean wasFolderChanged(String folder, HotReloadBatch batch) {
