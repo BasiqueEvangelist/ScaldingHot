@@ -13,8 +13,9 @@ public class UiModelReloadPlugin implements HotReloadPlugin {
     public void onHotReload(HotReloadBatch batch) {
         batch.queueFinishTask(() -> {
             var client = Minecraft.getInstance();
+            var screen = Minecraft.getInstance().gui.screen();
 
-            if (client.screen instanceof OwoModelScreenAccess access) {
+            if (screen instanceof OwoModelScreenAccess access) {
                 Identifier modelId = access.scaldinghot$modelId();
                 if (modelId == null) return;
 
@@ -24,7 +25,7 @@ public class UiModelReloadPlugin implements HotReloadPlugin {
 
                 access.scaldinghot$clearAdapter();
                 access.scaldinghot$setModel(UIModelLoader.get(modelId));
-                ((ScreenAccessor) client.screen).callRebuildWidgets();
+                ((ScreenAccessor) screen).callRebuildWidgets();
             }
         });
     }
