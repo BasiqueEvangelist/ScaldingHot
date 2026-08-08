@@ -5,14 +5,14 @@ import me.basiqueevangelist.scaldinghot.impl.ScaldingHot;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import net.minecraft.commands.CommandBuildContext;
 
-import static net.fabricmc.fabric.api.client.command.v2.ClientCommandManager.literal;
+import static net.fabricmc.fabric.api.client.command.v2.ClientCommands.literal;
 
 public class ReloadConfigCommand {
     public static void register(CommandDispatcher<FabricClientCommandSource> dispatcher, CommandBuildContext registries) {
         dispatcher.register(
             literal("scaldinghot")
                 .then(literal("reload_config")
-                    .executes(ctx -> {
+                    .executes(_ -> {
                         ScaldingHot.CONFIG.load();
 
                         return 0;

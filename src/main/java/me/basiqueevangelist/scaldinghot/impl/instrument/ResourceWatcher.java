@@ -4,6 +4,7 @@ import me.basiqueevangelist.scaldinghot.api.ScaldingPackResources;
 import me.basiqueevangelist.scaldinghot.impl.ScaldingHot;
 import net.minecraft.server.packs.PackResources;
 import net.minecraft.server.packs.PackType;
+import org.jspecify.annotations.NullMarked;
 
 import java.io.IOException;
 import java.nio.file.*;
@@ -90,6 +91,7 @@ public class ResourceWatcher {
                             try {
                                 Files.walkFileTree(filePath, new SimpleFileVisitor<>() {
                                     @Override
+                                    @NullMarked
                                     public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
                                         if (attrs.isRegularFile())
                                             HotReloadBatchImpl.get(ResourceWatcher.this.type).fileAdded(file);

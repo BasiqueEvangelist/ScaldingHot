@@ -26,7 +26,7 @@ public class ServerReloadPlugin implements HotReloadPlugin {
             boolean tagsChanged = wasFolderChanged("tags/", batch);
 
             if (tagsChanged) {
-                ((MinecraftServerAccessor) server).getResources().managers().updateStaticRegistryTags();
+                ((MinecraftServerAccessor) server).getResources().managers().updateComponentsAndStaticRegistryTags();
             }
 
             PlayerList playerList = server.getPlayerList();

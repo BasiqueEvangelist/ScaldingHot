@@ -4,8 +4,8 @@ import me.basiqueevangelist.scaldinghot.api.HotReloadBatch;
 import me.basiqueevangelist.scaldinghot.api.HotReloadPlugin;
 import me.basiqueevangelist.scaldinghot.impl.ScaldingHot;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.resources.model.AtlasManager;
 import net.minecraft.client.resources.model.ModelManager;
+import net.minecraft.client.resources.model.sprite.AtlasManager;
 
 public class ModelReloadPlugin implements HotReloadPlugin {
     @Override
@@ -16,9 +16,7 @@ public class ModelReloadPlugin implements HotReloadPlugin {
         batch.markNeedsReload(AtlasManager.class); // TODO: don't remake atlases unless it's absolutely necessary
         batch.markNeedsReload(ModelManager.class);
 
-        batch.queueFinishTask(() -> {
-            Minecraft.getInstance().levelRenderer.allChanged();
-        });
+        batch.queueFinishTask(() -> Minecraft.getInstance().levelRenderer.notifyAll());
     }
 
     private boolean wasFolderChanged(String folder, HotReloadBatch batch) {

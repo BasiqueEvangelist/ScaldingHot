@@ -1,8 +1,8 @@
 package me.basiqueevangelist.scaldinghot.impl.client.compat.lavender;
 
-import io.wispforest.lavender.book.BookContentLoader;
+/*import io.wispforest.lavender.book.BookContentLoader;
 import io.wispforest.lavender.book.BookLoader;
-import io.wispforest.lavender.client.LavenderBookScreen;
+import io.wispforest.lavender.client.LavenderBookScreen;*/
 import me.basiqueevangelist.scaldinghot.api.HotReloadBatch;
 import me.basiqueevangelist.scaldinghot.api.HotReloadPlugin;
 import me.basiqueevangelist.scaldinghot.api.ScaldingApi;
@@ -16,7 +16,7 @@ public class LavenderCompatPlugin implements HotReloadPlugin {
 
     @Override
     public void onHotReload(HotReloadBatch batch) {
-        if (Minecraft.getInstance().level == null) return;
+/*        if (Minecraft.getInstance().level == null) return;
 
         BookLoader.reload(batch.resourceManager());
         BookContentLoader.reloadContents(batch.resourceManager());
@@ -33,6 +33,6 @@ public class LavenderCompatPlugin implements HotReloadPlugin {
                     Minecraft.getInstance().setScreen(null);
                 }
             }
-        });
+        });*/
     }
 }

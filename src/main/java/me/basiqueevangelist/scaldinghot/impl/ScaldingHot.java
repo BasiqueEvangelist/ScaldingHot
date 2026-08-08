@@ -29,6 +29,6 @@ public class ScaldingHot implements ModInitializer {
 		ScaldingApi.addPlugin(PackType.SERVER_DATA, new ServerReloadPlugin());
 
 		ServerLifecycleEvents.SERVER_STARTING.register(server -> SERVER = server);
-		ServerLifecycleEvents.SERVER_STOPPED.register(server -> SERVER = null);
+		ServerLifecycleEvents.SERVER_STOPPED.register(_ -> SERVER = null);
 	}
 }

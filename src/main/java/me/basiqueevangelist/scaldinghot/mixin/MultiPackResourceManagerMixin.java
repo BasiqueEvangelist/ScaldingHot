@@ -26,13 +26,13 @@ public abstract class MultiPackResourceManagerMixin implements ResourceManagerAc
     @Mutable
     @Shadow @Final private Map<String, FallbackResourceManager> namespacedManagers;
 
-    @Shadow @Nullable protected abstract ResourceFilterSection getPackFilterSection(PackResources packResources);
+    @Shadow @Nullable protected abstract ResourceFilterSection getPackFilterSection(PackResources pack);
 
     @Unique private PackType scaldinghot$type;
 
     @Inject(method = "<init>", at = @At("TAIL"))
-    private void init(PackType resourceType, List<PackResources> list, CallbackInfo ci) {
-        this.scaldinghot$type = resourceType;
+    private void init(PackType type, List<PackResources> packs, CallbackInfo ci) {
+        this.scaldinghot$type = type;
     }
 
     @Override

@@ -8,7 +8,6 @@ import me.basiqueevangelist.scaldinghot.mixin.client.TextureAtlasAccessor;
 import me.basiqueevangelist.scaldinghot.mixin.client.TextureAtlasSpriteAccessor;
 import me.basiqueevangelist.scaldinghot.mixin.client.TextureManagerAccessor;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.texture.SpriteLoader;
 import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.client.renderer.texture.atlas.SpriteResourceLoader;
 

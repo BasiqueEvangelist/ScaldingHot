@@ -1,5 +1,5 @@
 plugins {
-	id 'fabric-loom' version '1.14-SNAPSHOT'
+	id 'net.fabricmc.fabric-loom' version '1.16-SNAPSHOT'
 	id 'maven-publish'
 }
 
@@ -21,6 +21,7 @@ repositories {
 		name = 'ParchmentMC'
 		url = 'https://maven.parchmentmc.org/'
 	}
+    maven { url 'https://jitpack.io' }
 }
 
 sourceSets {
@@ -52,24 +53,20 @@ loom {
 dependencies {
 	// To change the versions see the gradle.properties file
 	minecraft "com.mojang:minecraft:${project.minecraft_version}"
-	mappings loom.layered {
-		officialMojangMappings()
-//		parchment("org.parchmentmc.data:parchment-${project.minecraft_version}:${parchment_version}@zip")
-	}
-	modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
+	implementation "net.fabricmc:fabric-loader:${project.loader_version}"
 
 	// Fabric API. This is technically optional, but you probably want it anyway.
-	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
+	implementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 
 	testmodImplementation sourceSets.main.output
 
 	include implementation("com.moulberry:mixinconstraints:1.0.1")
 
 	// Optional dependencies
-	modCompileOnly "io.wispforest:lavender:${project.lavender_version}"
+//	compileOnly "io.wispforest:lavender:${project.lavender_version}"
 //	modLocalRuntime "io.wispforest:lavender:${project.lavender_version}"
 
-	modCompileOnly "io.wispforest:owo-lib:${project.owo_version}"
+	compileOnly "io.wispforest:owo-lib:${project.owo_version}"
 //	modLocalRuntime "io.wispforest:owo-lib:${project.owo_version}"
 }
 
@@ -81,18 +78,16 @@ processResources {
 	}
 }
 
-tasks.withType(JavaCompile).configureEach {
-	it.options.release = 21
-}
-
 java {
+	// ise toolchain instead
+	toolchain {
+		languageVersion = JavaLanguageVersion.of(25)
+	}
+
 	// Loom will automatically attach sourcesJar to a RemapSourcesJar task and to the "build" task
 	// if it is present.
 	// If you remove this line, sources will not be generated.
 	withSourcesJar()
-
-	sourceCompatibility = JavaVersion.VERSION_21
-	targetCompatibility = JavaVersion.VERSION_21
 }
 
 jar {

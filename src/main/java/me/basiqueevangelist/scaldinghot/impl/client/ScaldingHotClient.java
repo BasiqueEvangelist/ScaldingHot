@@ -38,8 +38,8 @@ public class ScaldingHotClient implements ClientModInitializer {
         if (FabricLoader.getInstance().isModLoaded("owo"))
             OwoCompat.init();
 
-        if (FabricLoader.getInstance().isModLoaded("lavender"))
-            LavenderCompatPlugin.init();
+/*        if (FabricLoader.getInstance().isModLoaded("lavender"))
+            LavenderCompatPlugin.init();*/
     }
 
     public static Executor getClientExecutor() {

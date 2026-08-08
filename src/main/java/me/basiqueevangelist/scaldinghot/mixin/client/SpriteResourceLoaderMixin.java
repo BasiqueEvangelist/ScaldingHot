@@ -16,8 +16,8 @@ import java.util.Set;
 
 @Mixin(SpriteResourceLoader.class)
 public interface SpriteResourceLoaderMixin {
-    @Inject(method = "method_52851", at = @At(value = "RETURN"))
-    private static void addOriginalId(Set<MetadataSectionType<?>> metadatas, Identifier id, Resource resource, CallbackInfoReturnable<SpriteContents> cir) {
+    @Inject(method = "lambda$create$0", at = @At(value = "RETURN"))
+    private static void addOriginalId(Set<MetadataSectionType<?>> additionalMetadataSections, Identifier spriteLocation, Resource resource, CallbackInfoReturnable<SpriteContents> cir) {
         var ret = cir.getReturnValue();
         if (ret == null) return;
 

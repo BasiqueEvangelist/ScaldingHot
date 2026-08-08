@@ -19,8 +19,8 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.concurrent.CompletableFuture;
 
-import static net.fabricmc.fabric.api.client.command.v2.ClientCommandManager.argument;
-import static net.fabricmc.fabric.api.client.command.v2.ClientCommandManager.literal;
+import static net.fabricmc.fabric.api.client.command.v2.ClientCommands.argument;
+import static net.fabricmc.fabric.api.client.command.v2.ClientCommands.literal;
 
 public class AddPathCommand {
     private static final SimpleCommandExceptionType INVALID_MOD = new SimpleCommandExceptionType(Component.literal("No such mod"));
@@ -70,7 +70,7 @@ public class AddPathCommand {
         if (path == null) return;
         if (!Files.exists(Path.of(path))) return;
 
-        ScaldingHot.CONFIG.get().modResourcePaths.computeIfAbsent(modid, unused -> new ArrayList<>()).add(path);
+        ScaldingHot.CONFIG.get().modResourcePaths.computeIfAbsent(modid, _ -> new ArrayList<>()).add(path);
         ScaldingHot.CONFIG.save();
 
         src.sendFeedback(Component.literal("Added path `" + path + "` to `" + modid + "`'s resources"));

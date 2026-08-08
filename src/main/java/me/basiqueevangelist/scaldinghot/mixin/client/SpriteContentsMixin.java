@@ -11,7 +11,7 @@ import org.spongepowered.asm.mixin.Unique;
 
 @Mixin(SpriteContents.class)
 public class SpriteContentsMixin implements SpriteContentsAccess {
-    @Shadow NativeImage[] byMipLevel;
+    @Shadow private NativeImage[] byMipLevel;
     @Unique private Identifier scaldinghot$originalId = null;
 
     @Override

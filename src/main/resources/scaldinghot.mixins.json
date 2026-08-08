@@ -27,7 +27,7 @@
         "client.TextureAtlasSpriteAccessor",
         "client.TextureManagerAccessor",
         "client.TextureManagerMixin",
-        "client.owo.BaseUIModelHandledScreenMixin",
+        "client.owo.BaseUIModelContainerScreenMixin",
         "client.owo.BaseUIModelScreenMixin"
     ]
 }

@@ -1,9 +1,9 @@
 package me.basiqueevangelist.scaldinghot.mixin.client.owo;
 
 import com.moulberry.mixinconstraints.annotations.IfModLoaded;
-import io.wispforest.owo.ui.base.BaseOwoHandledScreen;
-import io.wispforest.owo.ui.base.BaseUIModelHandledScreen;
-import io.wispforest.owo.ui.core.ParentComponent;
+import io.wispforest.owo.ui.base.BaseOwoContainerScreen;
+import io.wispforest.owo.ui.base.BaseUIModelContainerScreen;
+import io.wispforest.owo.ui.core.ParentUIComponent;
 import io.wispforest.owo.ui.parsing.UIModel;
 import me.basiqueevangelist.scaldinghot.impl.pond.OwoModelScreenAccess;
 import net.minecraft.network.chat.Component;
@@ -17,14 +17,14 @@ import org.spongepowered.asm.mixin.Mutable;
 import org.spongepowered.asm.mixin.Shadow;
 
 @IfModLoaded("owo")
-@Mixin(BaseUIModelHandledScreen.class)
-public abstract class BaseUIModelHandledScreenMixin<R extends ParentComponent, S extends AbstractContainerMenu> extends BaseOwoHandledScreen<R, S> implements OwoModelScreenAccess {
+@Mixin(BaseUIModelContainerScreen.class)
+public abstract class BaseUIModelContainerScreenMixin<R extends ParentUIComponent, S extends AbstractContainerMenu> extends BaseOwoContainerScreen<R, S> implements OwoModelScreenAccess {
     @Shadow @Final @Nullable protected Identifier modelId;
 
     @Mutable
     @Shadow @Final protected UIModel model;
 
-    protected BaseUIModelHandledScreenMixin(S handler, Inventory inventory, Component title) {
+    protected BaseUIModelContainerScreenMixin(S handler, Inventory inventory, Component title) {
         super(handler, inventory, title);
     }
 

@@ -3,7 +3,7 @@ package me.basiqueevangelist.scaldinghot.mixin.client.owo;
 import com.moulberry.mixinconstraints.annotations.IfModLoaded;
 import io.wispforest.owo.ui.base.BaseOwoScreen;
 import io.wispforest.owo.ui.base.BaseUIModelScreen;
-import io.wispforest.owo.ui.core.ParentComponent;
+import io.wispforest.owo.ui.core.ParentUIComponent;
 import io.wispforest.owo.ui.parsing.UIModel;
 import me.basiqueevangelist.scaldinghot.impl.pond.OwoModelScreenAccess;
 import net.minecraft.resources.Identifier;
@@ -15,7 +15,7 @@ import org.spongepowered.asm.mixin.Shadow;
 
 @IfModLoaded("owo")
 @Mixin(BaseUIModelScreen.class)
-public abstract class BaseUIModelScreenMixin<R extends ParentComponent> extends BaseOwoScreen<R> implements OwoModelScreenAccess {
+public abstract class BaseUIModelScreenMixin<R extends ParentUIComponent> extends BaseOwoScreen<R> implements OwoModelScreenAccess {
     @Shadow
     @Final
     @Nullable protected Identifier modelId;

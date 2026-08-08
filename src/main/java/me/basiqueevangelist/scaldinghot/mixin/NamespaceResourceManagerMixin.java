@@ -18,12 +18,12 @@ import java.util.List;
 @Mixin(FallbackResourceManager.class)
 public class NamespaceResourceManagerMixin {
     @Inject(method = "createResource", at = @At("RETURN"))
-    private static void addId(PackResources pack, Identifier id, IoSupplier<InputStream> supplier, IoSupplier<ResourceMetadata> metadataSupplier, CallbackInfoReturnable<Resource> cir) {
-        ((ResourceAccess) cir.getReturnValue()).scaldinghot$setId(id);
+    private static void addId(PackResources source, Identifier location, IoSupplier<InputStream> resource, IoSupplier<ResourceMetadata> metadata, CallbackInfoReturnable<Resource> cir) {
+        ((ResourceAccess) cir.getReturnValue()).scaldinghot$setId(location);
     }
 
     @Inject(method = "getResourceStack", at = @At("RETURN"))
-    private void addId(Identifier id, CallbackInfoReturnable<List<Resource>> cir) {
-        cir.getReturnValue().forEach(x -> ((ResourceAccess) x).scaldinghot$setId(id));
+    private void addId(Identifier location, CallbackInfoReturnable<List<Resource>> cir) {
+        cir.getReturnValue().forEach(x -> ((ResourceAccess) x).scaldinghot$setId(location));
     }
 }

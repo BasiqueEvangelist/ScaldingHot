@@ -24,8 +24,8 @@ import java.util.concurrent.Executor;
 @Mixin(SimpleReloadInstance.class)
 public class SimpleReloadInstanceMixin {
     @ModifyArg(method = "prepareTasks", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/packs/resources/SimpleReloadInstance$StateFactory;create(Lnet/minecraft/server/packs/resources/PreparableReloadListener$SharedState;Lnet/minecraft/server/packs/resources/PreparableReloadListener$PreparationBarrier;Lnet/minecraft/server/packs/resources/PreparableReloadListener;Ljava/util/concurrent/Executor;Ljava/util/concurrent/Executor;)Ljava/util/concurrent/CompletableFuture;"))
-    private PreparableReloadListener.SharedState instrument(PreparableReloadListener.SharedState state, @Local PreparableReloadListener reloader) {
-        ResourceManager newManager = InstrumentingResourceManager.wrap(state.resourceManager(), reloader);
+    private PreparableReloadListener.SharedState instrument(PreparableReloadListener.SharedState state, @Local(name = "listener") PreparableReloadListener listener) {
+        ResourceManager newManager = InstrumentingResourceManager.wrap(state.resourceManager(), listener);
 
         if (state.resourceManager() == newManager) return state;
 
@@ -35,13 +35,13 @@ public class SimpleReloadInstanceMixin {
     }
 
     @Inject(method = "create", at = @At("HEAD"))
-    private static void clearWatches(ResourceManager manager, List<PreparableReloadListener> reloaders, Executor prepareExecutor, Executor applyExecutor, CompletableFuture<Unit> initialStage, boolean profiled, CallbackInfoReturnable<ReloadInstance> cir) {
+    private static void clearWatches(ResourceManager resourceManager, List<PreparableReloadListener> listeners, Executor backgroundExecutor, Executor mainThreadExecutor, CompletableFuture<Unit> initialTask, boolean enableProfiling, CallbackInfoReturnable<ReloadInstance> cir) {
         if (CursedThreadLocals.IN_HOT_RELOAD.get()) return;
 
-        if (manager instanceof ResourceManagerAccess access) {
-            ResourceWatcher.get(access.scaldinghot$type()).start(manager.listPacks().toList());
+        if (resourceManager instanceof ResourceManagerAccess access) {
+            ResourceWatcher.get(access.scaldinghot$type()).start(resourceManager.listPacks().toList());
 
-            ReloaderShed.stowReloaders(access.scaldinghot$type(), reloaders);
+            ReloaderShed.stowReloaders(access.scaldinghot$type(), listeners);
         }
     }
 }

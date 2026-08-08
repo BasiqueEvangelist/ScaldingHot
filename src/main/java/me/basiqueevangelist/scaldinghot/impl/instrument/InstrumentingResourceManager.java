@@ -1,6 +1,5 @@
 package me.basiqueevangelist.scaldinghot.impl.instrument;
 
-import me.basiqueevangelist.scaldinghot.impl.ScaldingHot;
 import me.basiqueevangelist.scaldinghot.impl.ScaldingRegistry;
 import me.basiqueevangelist.scaldinghot.impl.pond.ResourceManagerAccess;
 import net.minecraft.resources.Identifier;
@@ -10,11 +9,13 @@ import net.minecraft.server.packs.resources.PreparableReloadListener;
 import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.server.packs.resources.ResourceManager;
 import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.NullMarked;
 
 import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
+@NullMarked
 public class InstrumentingResourceManager implements ResourceManager {
     private final ResourceManager delegate;
     private final @Nullable PreparableReloadListener reloader;
